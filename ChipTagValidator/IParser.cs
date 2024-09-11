@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TagsParser.Classes
 {
-    internal interface IParser
+    public interface IParser
     {
         public List<string> Parse(string filePath);
 

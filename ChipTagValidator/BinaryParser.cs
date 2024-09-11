@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TagsParser.Classes
 {
-    internal class BinaryParser : IParser
+    public class BinaryParser : IParser
     {
 
         public List<String> Parse(string filePath)

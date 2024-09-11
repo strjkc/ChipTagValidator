@@ -2,15 +2,15 @@
 
 namespace TagsParser.Classes
 {
-    internal class ChipDataParser
+    public class ChipDataParser
     {
         //Constant lengths according to the specification num of bytes * 2
         private const int lenOfMacIdData = 12 * 2;
         private const int lenOfEndDelimiter = 5 * 2;
         private const int lenOfChipHeader = 27 * 2;
-        List<string> validTags;
+        List<TagModel> validTags;
 
-        public ChipDataParser(List<string> validTags)
+        public ChipDataParser(List<TagModel> validTags)
         {
             this.validTags = validTags;
         }
@@ -29,15 +29,17 @@ namespace TagsParser.Classes
                     string tagOf2 = sanitiziedstring.Substring(i, 2);
                     string tagOf4 = sanitiziedstring.Substring(i, 4);
                     //instead of isValidTag i can use IndexOf and check if index is >= 0
-                    if (IsTagValid(tagOf2))
+                    TagModel validTag2 = IsTagValid(tagOf2);
+                    TagModel validTag4 = IsTagValid(tagOf4);
+                    if (validTag2 != null)
                     {
-                        TagModel tag = ParseTagFromString(tagOf2, i, sanitiziedstring);
+                        TagModel tag = ParseTagFromString(tagOf2, i, sanitiziedstring, validTag2);
                         tagsInCard.Add(tag);
                         i += GetNewPosition(tag);
                     }
-                    else if (IsTagValid(tagOf4))
+                    else if (validTag4 != null)
                     {
-                        TagModel tag = ParseTagFromString(tagOf4, i, sanitiziedstring);
+                        TagModel tag = ParseTagFromString(tagOf4, i, sanitiziedstring, validTag4);
                         tagsInCard.Add(tag);
                         i += GetNewPosition(tag);
                     }
@@ -45,7 +47,8 @@ namespace TagsParser.Classes
                     {
                         i++;
                         Console.WriteLine($"Tag {tagOf2} or {tagOf4} is invalid");
-                        throw new Exception("Unexpected tag");
+                        //throw new Exception("Unexpected tag");
+                        //break;
                     }
                 }
                 fileCardTags.Add(tagsInCard);
@@ -62,11 +65,11 @@ namespace TagsParser.Classes
 
         private int GetNewPosition(TagModel tag)
         {
-            return tag.Value.Length + tag.Name.Length + tag.Length.Length;
+            return tag.Value.Length + tag.ContactName.Length + tag.Length.Length;
         }
 
         //tag type cless/contact should be determined before creating a tag object
-        private TagModel ParseTagFromString(string currentTagname, int currentIndex, string chipDataString)
+        private TagModel ParseTagFromString(string currentTagname, int currentIndex, string chipDataString, TagModel validTag)
         {
 
             int startOfTagLength = currentIndex + currentTagname.Length;
@@ -75,18 +78,17 @@ namespace TagsParser.Classes
             string tagLength = chipDataString.Substring(startOfTagLength, endOfTagLength);
             int valueLength = Int32.Parse(tagLength, System.Globalization.NumberStyles.HexNumber) * 2;
             string tagValue = chipDataString.Substring(startOfTagValue, valueLength);
-            return new TagModel(currentTagname, tagLength, tagValue, "");
+            return new TagModel(validTag.ContactName, validTag.ClessName, tagLength, tagValue, "", validTag.IsCless);
         }
 
-        private Boolean IsTagValid(string tag)
+        private TagModel IsTagValid(string tag)
         {
-            foreach (string validTag in validTags)
+            foreach (TagModel validTag in validTags)
             {
-                if (validTag.Equals(tag))
-                    return true;
+                if (validTag.ContactName.Equals(tag) || validTag.ClessName.Equals(tag))
+                    return validTag;
             }
-            return false;
-
+            return null;
         }
 
         //ovo treba da se izvadi odavde
