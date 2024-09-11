@@ -9,7 +9,7 @@ namespace TagsParser.Classes
 {
     internal interface IParser
     {
-        public List<String> parse(String filePath);
+        public List<string> Parse(string filePath);
 
     }
 }

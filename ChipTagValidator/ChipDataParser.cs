@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace TagsParser.Classes
 {
@@ -19,27 +15,29 @@ namespace TagsParser.Classes
             this.validTags = validTags;
         }
 
-        public List<List<Tag>> ParseChipDataStrings(List<string> chipDatastrings)
+        public List<List<TagModel>> ParseChipDataStrings(List<string> chipDatastrings)
         {
-            List<List<Tag>> fileCardTags = new List<List<Tag>>();
+            List<List<TagModel>> fileCardTags = new List<List<TagModel>>();
             foreach (string chipDatastring in chipDatastrings)
             {
-                List<Tag> tagsInCard = new List<Tag>();
+                List<TagModel> tagsInCard = new List<TagModel>();
+                //sanitization should not be a mandatory step
                 string sanitiziedstring = RemoveHeader(chipDatastring);
                 int i = 0;
                 while (i < sanitiziedstring.Length)
                 {
                     string tagOf2 = sanitiziedstring.Substring(i, 2);
                     string tagOf4 = sanitiziedstring.Substring(i, 4);
+                    //instead of isValidTag i can use IndexOf and check if index is >= 0
                     if (IsTagValid(tagOf2))
                     {
-                        Tag tag = ParseTagFromString(tagOf2, i, sanitiziedstring);
+                        TagModel tag = ParseTagFromString(tagOf2, i, sanitiziedstring);
                         tagsInCard.Add(tag);
                         i += GetNewPosition(tag);
                     }
                     else if (IsTagValid(tagOf4))
                     {
-                        Tag tag = ParseTagFromString(tagOf4, i, sanitiziedstring);
+                        TagModel tag = ParseTagFromString(tagOf4, i, sanitiziedstring);
                         tagsInCard.Add(tag);
                         i += GetNewPosition(tag);
                     }
@@ -62,12 +60,13 @@ namespace TagsParser.Classes
 
         }
 
-        private int GetNewPosition(Tag tag)
+        private int GetNewPosition(TagModel tag)
         {
             return tag.Value.Length + tag.Name.Length + tag.Length.Length;
         }
 
-        private Tag ParseTagFromString(string currentTagname, int currentIndex, string chipDataString)
+        //tag type cless/contact should be determined before creating a tag object
+        private TagModel ParseTagFromString(string currentTagname, int currentIndex, string chipDataString)
         {
 
             int startOfTagLength = currentIndex + currentTagname.Length;
@@ -76,7 +75,7 @@ namespace TagsParser.Classes
             string tagLength = chipDataString.Substring(startOfTagLength, endOfTagLength);
             int valueLength = Int32.Parse(tagLength, System.Globalization.NumberStyles.HexNumber) * 2;
             string tagValue = chipDataString.Substring(startOfTagValue, valueLength);
-            return new Tag(currentTagname, tagLength, tagValue, "");
+            return new TagModel(currentTagname, tagLength, tagValue, "");
         }
 
         private Boolean IsTagValid(string tag)
@@ -89,6 +88,9 @@ namespace TagsParser.Classes
             return false;
 
         }
+
+        //ovo treba da se izvadi odavde
+
 
         private string RemoveHeader(string chipstring)
         {

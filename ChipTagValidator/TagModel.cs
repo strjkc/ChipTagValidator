@@ -8,15 +8,10 @@ namespace TagsParser.Classes
 {
     public class TagModel
     {
-        private String name;
-        public String length;
-        private String value;
-        private String templateTag;
-
-        public String Name { get; private set; }
-        public String Length { get; private set; }
-        public String Value { get; private set; }
-        public String TemplateTag { get; private set; }
+        public string Name { get; private set; }
+        public string Length { get; private set; }
+        public string Value { get; private set; }
+        public string TemplateTag { get; private set; }
 
         public TagModel(string name, string length, string value, string templateTag)
         {

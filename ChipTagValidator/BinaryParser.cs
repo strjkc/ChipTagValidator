@@ -10,7 +10,7 @@ namespace TagsParser.Classes
     internal class BinaryParser : IParser
     {
 
-        public List<String> parse(string filePath)
+        public List<String> Parse(string filePath)
         {
             return ParseFile(filePath);
         }
@@ -44,7 +44,7 @@ namespace TagsParser.Classes
                         //char data = (char)currentCharacter;
                         if ((char)currentInt == '#' && currentstring.Length > 10)
                         {
-                            string lastCharactersOfBuilder = hexToChar(currentstring.ToString().Substring(currentstring.Length - 10));
+                            string lastCharactersOfBuilder = HexToChar(currentstring.ToString().Substring(currentstring.Length - 10));
 
                             if (lastCharactersOfBuilder.Equals(cardEnd))
                             {
@@ -71,7 +71,7 @@ namespace TagsParser.Classes
         }
 
 
-        private string hexToChar(string hexString)
+        private string HexToChar(string hexString)
         {
             StringBuilder sb = new();
             for (int i = 0; i < hexString.Length; i += 2)
