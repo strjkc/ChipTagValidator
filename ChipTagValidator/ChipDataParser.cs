@@ -65,7 +65,7 @@ namespace TagsParser.Classes
 
         private int GetNewPosition(TagModel tag)
         {
-            return tag.Value.Length + tag.ContactName.Length + tag.Length.Length;
+            return tag.Value.Length + tag.StandardTagname.Length + tag.Length.Length;
         }
 
         //tag type cless/contact should be determined before creating a tag object
@@ -78,14 +78,14 @@ namespace TagsParser.Classes
             string tagLength = chipDataString.Substring(startOfTagLength, endOfTagLength);
             int valueLength = Int32.Parse(tagLength, System.Globalization.NumberStyles.HexNumber) * 2;
             string tagValue = chipDataString.Substring(startOfTagValue, valueLength);
-            return new TagModel(validTag.ContactName, validTag.ClessName, tagLength, tagValue, "", validTag.IsCless);
+            return new TagModel(validTag.StandardTagname, validTag.InternalTagName, tagLength, tagValue, "", validTag.IsCless, false);
         }
 
         private TagModel IsTagValid(string tag)
         {
             foreach (TagModel validTag in validTags)
             {
-                if (validTag.ContactName.Equals(tag) || validTag.ClessName.Equals(tag))
+                if (validTag.StandardTagname.Equals(tag) || validTag.InternalTagName.Equals(tag))
                     return validTag;
             }
             return null;

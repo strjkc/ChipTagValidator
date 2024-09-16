@@ -15,11 +15,14 @@ namespace ChipTagValidatorUI
 
         private void button1_Click(object sender, EventArgs e)
         {
+            /*
             List<TagModel> validTags = [new TagModel("4F", "", "", "", "", false), new TagModel("8E", "", "", "", "", false) , new TagModel("8E", "DF4B", "", "", "", true)];
             IParser binaryParser = new BinaryParser();
             ChipDataParser cp = new ChipDataParser(validTags);
             cp.ParseChipDataStrings(binaryParser.Parse("C:\\Users\\Strahinja\\Downloads\\abiCvbd231122001.txt"));
-
+            */
+            WordSpecParser sp = new WordSpecParser();
+            sp.Parse(@"C:\Users\Strahinja\Desktop\Embossing_Spec_Strahinja.docx");
 
         }
     }

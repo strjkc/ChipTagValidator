@@ -8,21 +8,23 @@ namespace TagsParser.Classes
 {
     public class TagModel
     {
-        public string ContactName { get; private set; }
-        public string ClessName { get; set; }
+        public string StandardTagname { get; set; }
+        public string InternalTagName { get; set; }
         public string Length { get; private set; }
         public string Value { get; private set; }
         public string TemplateTag { get; private set; }
         public bool IsCless { get; set; }
+        public bool HasTemplateTag { get; set; }
 
-        public TagModel(string contactName, string clessName, string length, string value, string templateTag, bool isCless)
+        public TagModel(string standardTagName, string internalTagName, string length, string value, string templateTag, bool isCless, bool hasTemplateTag)
         {
-            ContactName = contactName;
-            ClessName = clessName;
+            StandardTagname = standardTagName;
+            InternalTagName = internalTagName;
             Length = length;
             Value = value;
             TemplateTag = templateTag;
             IsCless = isCless;
+            HasTemplateTag = hasTemplateTag;
         }
     }
 }
