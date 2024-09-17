@@ -12,7 +12,7 @@ namespace TagsParser.Classes
         public string InternalTagName { get; set; }
         public string Length { get; private set; }
         public string Value { get; private set; }
-        public string TemplateTag { get; private set; }
+        public string TemplateTag { get; set; }
         public bool IsCless { get; set; }
         public bool HasTemplateTag { get; set; }
 
