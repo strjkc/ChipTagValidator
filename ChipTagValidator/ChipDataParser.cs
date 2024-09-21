@@ -78,7 +78,7 @@ namespace TagsParser.Classes
             string tagLength = chipDataString.Substring(startOfTagLength, endOfTagLength);
             int valueLength = Int32.Parse(tagLength, System.Globalization.NumberStyles.HexNumber) * 2;
             string tagValue = chipDataString.Substring(startOfTagValue, valueLength);
-            return new TagModel(validTag.StandardTagname, validTag.InternalTagName, tagLength, tagValue, "", validTag.IsCless, false);
+            return new TagModel(validTag.StandardTagname, validTag.InternalTagName, tagLength, tagValue, "", validTag.IsCless, false, false);
         }
 
         private TagModel IsTagValid(string tag)

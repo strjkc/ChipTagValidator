@@ -8,15 +8,17 @@ namespace TagsParser.Classes
 {
     public class TagModel
     {
-        public string StandardTagname { get; set; }
-        public string InternalTagName { get; set; }
+        public string StandardTagname { get; private set; }
+        public string InternalTagName { get; private set; }
         public string Length { get; private set; }
         public string Value { get; private set; }
-        public string TemplateTag { get; set; }
-        public bool IsCless { get; set; }
-        public bool HasTemplateTag { get; set; }
+        public string TemplateTag { get; private set; }
+        public bool IsCless { get; private set; }
+        public bool HasTemplateTag { get; private set; }
+        public bool IsMandatory { get; private set; }
 
-        public TagModel(string standardTagName, string internalTagName, string length, string value, string templateTag, bool isCless, bool hasTemplateTag)
+
+        public TagModel(string standardTagName, string internalTagName, string length, string value, string templateTag, bool isCless, bool hasTemplateTag, bool isMandatory)
         {
             StandardTagname = standardTagName;
             InternalTagName = internalTagName;
@@ -25,6 +27,7 @@ namespace TagsParser.Classes
             TemplateTag = templateTag;
             IsCless = isCless;
             HasTemplateTag = hasTemplateTag;
+            IsMandatory = isMandatory;
         }
     }
 }

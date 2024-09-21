@@ -13,48 +13,57 @@ namespace ChipTagValidator
 {
     public class WordSpecParser
     {
-        //we expect the number of the columns in the document to be 5, and that the 5th table is containing chip data
+        //TODO: these should be extracted to parameter values
         private const int expectedColumnCount = 5;
         private const int startFromTable = 5;
+        private string[] invalidValues = { "n/a", "/", "", " "};
+        int columnForInternalTags = 1;
+        int columnForStandardTags = 3;
+        int columnForTemplateTags = 4;
+        int columnForMandatoryTags = 5;
 
         public List<TagModel> Parse(string file) {
-            int columnForInternalTags = 1;
-            int columnForStandardTags = 3;
-            int columnForTemplateTeags = 4;
-
-
             List<TagModel> tagModels = new List<TagModel>();
-            using WordprocessingDocument doc = WordprocessingDocument.Open(file, false);
-            Body body = doc.MainDocumentPart.Document.Body;
+
+            using WordprocessingDocument doc = WordprocessingDocument.Open(file, false) 
+                ?? throw new NullReferenceException("Error on opening the Word Document");
             
-            
-            var tables = body.Elements<Table>().ToList();
-            for (int i = startFromTable; i < tables.Count; i++)
+            // The doc can containt a lot of tables, start from the first table relevant to chip data
+
+            var tables = doc.MainDocumentPart.Document.Body.Elements<Table>().Skip(startFromTable).ToList()
+                        ?? throw new NullReferenceException("Tables not found in document");
+            foreach (Table table in tables)
             {
-                //od 5 do 12 mi treba
-                var table = tables[i];
-                // uzmi ako je u drugoj koloni nesto sto moze da se konvertuje u broj, onda uzmi tag
                 foreach (TableRow row in table.Elements<TableRow>())
                 {
-                    if(row.ChildElements.Count == expectedColumnCount) { 
-                        var tag = new TagModel("", "", "", "", "", false, false);
-
-                        string internalTagText = row.ChildElements[columnForInternalTags].InnerText.Trim();
-                        string standardTagText = row.ChildElements[columnForStandardTags].InnerText.Trim();
-                        string templateTagText = row.ChildElements[columnForTemplateTeags].InnerText.Trim();
-
-                        tag.InternalTagName = internalTagText;
-                        tag.StandardTagname = string.Equals(standardTagText, "n/a", StringComparison.OrdinalIgnoreCase) ? "" : standardTagText;
-                        tag.TemplateTag = string.Equals(templateTagText, "n/a", StringComparison.OrdinalIgnoreCase) ? "" : templateTagText;
-                        
-                        tagModels.Add(tag);
-
+                    // Check if the number of columns in doc is expected by the user, if not, issues in the BuildTagFromData may occur
+                    if (row.ChildElements.Count != expectedColumnCount){
+                        throw new ArgumentException("Number of columns doesn't match provided parameter, parsing errors may occur");
                     }
+                    TagModel tag = BuildTagFromData(row);
+                    tagModels.Add(tag);
 
                 }
                 }
             return tagModels;
 
+        }
+
+
+        private TagModel BuildTagFromData(TableRow row) {
+            var tagBuilder = new TagBuilder();
+
+            string internalTagText = row.ChildElements[columnForInternalTags].InnerText.Trim();
+            string standardTagText = row.ChildElements[columnForStandardTags].InnerText.Trim();
+            string templateTagText = row.ChildElements[columnForTemplateTags].InnerText.Trim();
+
+            tagBuilder.InternalTagName = internalTagText;
+            tagBuilder.StandardTagname = ContainsInvalidValues(standardTagText) ? "" : standardTagText;
+            tagBuilder.TemplateTag = ContainsInvalidValues(standardTagText) ? "" : templateTagText;
+            return tagBuilder.BuildTag();
+        }
+        private bool ContainsInvalidValues(string fieldValue) {
+            return invalidValues.Contains(fieldValue.ToLower());
         }
     }
 }

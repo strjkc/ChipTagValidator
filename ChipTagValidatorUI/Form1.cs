@@ -22,7 +22,7 @@ namespace ChipTagValidatorUI
             cp.ParseChipDataStrings(binaryParser.Parse("C:\\Users\\Strahinja\\Downloads\\abiCvbd231122001.txt"));
             */
             WordSpecParser sp = new WordSpecParser();
-            sp.Parse(@"C:\Users\Strahinja\Desktop\Embossing_Spec_Strahinja.docx");
+            sp.Parse(@"C:\Users\Strahinja\Desktop\Embossing_Spec_Strahinjaa.docx");
 
         }
     }
