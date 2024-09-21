@@ -26,7 +26,7 @@ namespace ChipTagValidator
             List<TagModel> tagModels = new List<TagModel>();
 
             using WordprocessingDocument doc = WordprocessingDocument.Open(file, false) 
-                ?? throw new NullReferenceException("Error on opening the Word Document");
+                ?? throw new FileNotFoundException("Error on opening the Word Document");
             
             // The doc can containt a lot of tables, start from the first table relevant to chip data
 
@@ -36,13 +36,13 @@ namespace ChipTagValidator
             {
                 foreach (TableRow row in table.Elements<TableRow>())
                 {
-                    // Check if the number of columns in doc is expected by the user, if not, issues in the BuildTagFromData may occur
-                    if (row.ChildElements.Count != expectedColumnCount){
-                        throw new ArgumentException("Number of columns doesn't match provided parameter, parsing errors may occur");
+                    // Presence of "TableProperties" indicates a table header, don't parse the header,
+                    // also if the expected number of columns is not equal to the number of columns in row, don't parse it
+                    if (!IsTableHeader(row) && (row.ChildElements.Count == expectedColumnCount))
+                    {
+                        TagModel tag = BuildTagFromData(row);
+                        tagModels.Add(tag);
                     }
-                    TagModel tag = BuildTagFromData(row);
-                    tagModels.Add(tag);
-
                 }
                 }
             return tagModels;
@@ -52,16 +52,30 @@ namespace ChipTagValidator
 
         private TagModel BuildTagFromData(TableRow row) {
             var tagBuilder = new TagBuilder();
+            // TODO: add error handling for out of bounds exceptions
+            try
+            {
+                string internalTagText = row.ChildElements[columnForInternalTags].InnerText.Trim();
+                string standardTagText = row.ChildElements[columnForStandardTags].InnerText.Trim();
+                string templateTagText = row.ChildElements[columnForTemplateTags].InnerText.Trim();
 
-            string internalTagText = row.ChildElements[columnForInternalTags].InnerText.Trim();
-            string standardTagText = row.ChildElements[columnForStandardTags].InnerText.Trim();
-            string templateTagText = row.ChildElements[columnForTemplateTags].InnerText.Trim();
-
-            tagBuilder.InternalTagName = internalTagText;
-            tagBuilder.StandardTagname = ContainsInvalidValues(standardTagText) ? "" : standardTagText;
-            tagBuilder.TemplateTag = ContainsInvalidValues(standardTagText) ? "" : templateTagText;
+                tagBuilder.InternalTagName = internalTagText;
+                tagBuilder.StandardTagname = ContainsInvalidValues(standardTagText) ? "" : standardTagText;
+                tagBuilder.TemplateTag = ContainsInvalidValues(templateTagText) ? "" : templateTagText;
+            }
+            catch (Exception e) { }
             return tagBuilder.BuildTag();
         }
+
+        private bool IsTableHeader(TableRow row) {
+            bool isTableHeader = row.ChildElements[0].GetType().Name == "TableRowProperties";
+            if (isTableHeader)
+                Debug.WriteLine("Table header identified, skipping");
+            else
+                Debug.WriteLine($"Row is not header, first child is {row.ChildElements[0].InnerText}");
+            return isTableHeader;
+        }
+
         private bool ContainsInvalidValues(string fieldValue) {
             return invalidValues.Contains(fieldValue.ToLower());
         }

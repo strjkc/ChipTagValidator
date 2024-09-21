@@ -22,7 +22,22 @@ namespace ChipTagValidatorUI
             cp.ParseChipDataStrings(binaryParser.Parse("C:\\Users\\Strahinja\\Downloads\\abiCvbd231122001.txt"));
             */
             WordSpecParser sp = new WordSpecParser();
-            sp.Parse(@"C:\Users\Strahinja\Desktop\Embossing_Spec_Strahinjaa.docx");
+            BinaryParser binParser = new BinaryParser();
+            try
+            {
+
+                List<TagModel> validTags = sp.Parse(@"C:\Users\Strahinja\Desktop\Embossing_Spec_Strahinja.docx");
+                List<string> parsedCards = binParser.Parse(@"C:\Users\Strahinja\Downloads\abiCvbd231122001.txt");
+                ChipDataParser cp = new ChipDataParser(validTags);
+                List<List<TagModel>> tml =  cp.ParseChipDataStrings(parsedCards);
+
+                XmlParser xmlParser;
+                
+
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
 
         }
     }
