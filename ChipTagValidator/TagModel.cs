@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TagsParser.Classes
 {
-    public class TagModel : ICloneable
+    public class TagModel
     {
         public string StandardTagname { get; private set; }
         public string InternalTagName { get; private set; }

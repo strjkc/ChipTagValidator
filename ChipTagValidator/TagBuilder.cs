@@ -27,7 +27,10 @@ namespace ChipTagValidator
             return new TagModel(StandardTagname, InternalTagName, Length, Value, TemplateTag, IsCless, HasTemplateTag, IsMandatory);
         }
 
-        public TagBuilder(TagModel tag)
+        public TagBuilder()
+        { }
+
+        public TagBuilder Copy(TagModel tag)
         {
             StandardTagname = tag.StandardTagname;
             InternalTagName = tag.InternalTagName;
@@ -37,6 +40,7 @@ namespace ChipTagValidator
             IsCless = tag.IsCless;
             HasTemplateTag = tag.HasTemplateTag;
             IsMandatory = tag.IsMandatory;
+            return this;
         }
     }
 }
