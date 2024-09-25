@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using ChipTagValidator;
+using System.Diagnostics;
+using System.Text;
 
 namespace TagsParser.Classes
 {
@@ -29,26 +31,17 @@ namespace TagsParser.Classes
                     string tagOf2 = sanitiziedstring.Substring(i, 2);
                     string tagOf4 = sanitiziedstring.Substring(i, 4);
                     //instead of isValidTag i can use IndexOf and check if index is >= 0
-                    TagModel validTag2 = IsTagValid(tagOf2);
-                    TagModel validTag4 = IsTagValid(tagOf4);
-                    if (validTag2 != null)
+                    TagModel validTag = IsTagValid(tagOf2) ?? IsTagValid(tagOf4);
+                    if (validTag != null)
                     {
-                        TagModel tag = ParseTagFromString(tagOf2, i, sanitiziedstring, validTag2);
-                        tagsInCard.Add(tag);
-                        i += GetNewPosition(tag);
-                    }
-                    else if (validTag4 != null)
-                    {
-                        TagModel tag = ParseTagFromString(tagOf4, i, sanitiziedstring, validTag4);
+                        TagModel tag = ParseTagFromString(i, sanitiziedstring, validTag);
                         tagsInCard.Add(tag);
                         i += GetNewPosition(tag);
                     }
                     else
                     {
-                        i++;
-                        Console.WriteLine($"Tag {tagOf2} or {tagOf4} is invalid");
-                        //throw new Exception("Unexpected tag");
-                        //break;
+                        Debug.WriteLine($"tags: {tagOf2} and {tagOf4} index: {i}");
+                        throw new InvalidOperationException("Emboss file contains an invalid tag");
                     }
                 }
                 fileCardTags.Add(tagsInCard);
@@ -65,36 +58,36 @@ namespace TagsParser.Classes
 
         private int GetNewPosition(TagModel tag)
         {
-            return tag.Value.Length + tag.StandardTagname.Length + tag.Length.Length;
+            return tag.Value.Length + tag.InternalTagName.Length + tag.Length.Length;
         }
 
         //tag type cless/contact should be determined before creating a tag object
-        private TagModel ParseTagFromString(string currentTagname, int currentIndex, string chipDataString, TagModel validTag)
+        private TagModel ParseTagFromString(int currentIndex, string chipDataString, TagModel validTag)
         {
-
-            int startOfTagLength = currentIndex + currentTagname.Length;
+            //this is safe because the name of the tag already matched the InternalTagName
+            int startOfTagLength = currentIndex + validTag.InternalTagName.Length;
             int endOfTagLength = 2;
             int startOfTagValue = startOfTagLength + 2;
             string tagLength = chipDataString.Substring(startOfTagLength, endOfTagLength);
             int valueLength = Int32.Parse(tagLength, System.Globalization.NumberStyles.HexNumber) * 2;
             string tagValue = chipDataString.Substring(startOfTagValue, valueLength);
-            return new TagModel(validTag.StandardTagname, validTag.InternalTagName, tagLength, tagValue, "", validTag.IsCless, false, false);
+            TagBuilder tagBuilder = new TagBuilder(validTag);
+            tagBuilder.Length = tagLength;
+            tagBuilder.Value = tagValue;
+            return tagBuilder.BuildTag();
         }
 
         private TagModel IsTagValid(string tag)
         {
             foreach (TagModel validTag in validTags)
             {
-                if (validTag.StandardTagname.Equals(tag) || validTag.InternalTagName.Equals(tag))
+                if (validTag.InternalTagName.Equals(tag))
                     return validTag;
             }
             return null;
         }
 
-        //ovo treba da se izvadi odavde
-
-
-        private string RemoveHeader(string chipstring)
+        public string RemoveHeader(string chipstring)
         {
             string removedHeader = chipstring.Substring(lenOfChipHeader);
             int lengthOfTrailer = lenOfMacIdData + lenOfEndDelimiter;

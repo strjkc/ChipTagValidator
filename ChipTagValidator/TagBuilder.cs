@@ -26,5 +26,17 @@ namespace ChipTagValidator
         public TagModel BuildTag() {
             return new TagModel(StandardTagname, InternalTagName, Length, Value, TemplateTag, IsCless, HasTemplateTag, IsMandatory);
         }
+
+        public TagBuilder(TagModel tag)
+        {
+            StandardTagname = tag.StandardTagname;
+            InternalTagName = tag.InternalTagName;
+            Length = tag.Length;
+            Value = tag.Value;
+            TemplateTag = tag.TemplateTag;
+            IsCless = tag.IsCless;
+            HasTemplateTag = tag.HasTemplateTag;
+            IsMandatory = tag.IsMandatory;
+        }
     }
 }

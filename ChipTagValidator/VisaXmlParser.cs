@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using TagsParser.Classes;
 
 namespace ChipTagValidator
 {
@@ -16,9 +17,9 @@ namespace ChipTagValidator
         private string _typeElement = "tagname";
         private string _attribute = "category";
 
-        public override List<String> Parse(string filePath) {
+        public override List<TagModel> Parse(string filePath) {
             XmlDocument doc = LoadXmlFile(filePath);
-            List<string> result = new List<string>();
+            List<TagModel> result = new List<TagModel>();
             XmlNodeList tagNodes = doc.GetElementsByTagName(_tagelement);
             XmlNodeList lengthNodes = doc.GetElementsByTagName(_lengthElement);
             XmlNodeList valueNodes = doc.GetElementsByTagName(_valueElement);
@@ -27,11 +28,12 @@ namespace ChipTagValidator
             {
                 for (int i = 0; i< tagNodes.Count; i++)
                 {
-                    string tag = tagNodes[i].InnerText;
-                    string length = lengthNodes[i].InnerText;
-                    string value = valueNodes[i].InnerText;
-                    string type = typeNodes[i].Attributes.GetNamedItem(_attribute).InnerText;
-                    result.Add(tagNodes[i].InnerText + lengthNodes[i].InnerText + valueNodes[i].InnerText + "{" + type + "}");
+                    TagBuilder tagBuilder = new TagBuilder();
+                    tagBuilder.StandardTagname = tagNodes[i].InnerText;
+                    tagBuilder.Length = lengthNodes[i].InnerText;
+                    tagBuilder.Value = valueNodes[i].InnerText;
+                    tagBuilder.IsCless = typeNodes[i].Attributes.GetNamedItem(_attribute).InnerText.Contains("qVSDC") ? true : false;
+                    result.Add(tagBuilder.BuildTag());
                 }
             }
             else

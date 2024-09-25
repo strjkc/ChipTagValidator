@@ -31,7 +31,8 @@ namespace ChipTagValidatorUI
                 ChipDataParser cp = new ChipDataParser(validTags);
                 List<List<TagModel>> tml =  cp.ParseChipDataStrings(parsedCards);
 
-                XmlParser xmlParser;
+                XmlParser xmlParser = new VisaXmlParser();
+//                List<string> vpaTags = xmlParser.Parse(@"C:\Users\Strahinja\Downloads\visa.xml");
                 
 
             }

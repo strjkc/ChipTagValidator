@@ -8,7 +8,7 @@ using TagsParser.Classes;
 
 namespace ChipTagValidator
 {
-    public abstract class XmlParser : IParser
+    public abstract class XmlParser
     {
         //da li parsira vpa ili cpv
         //primi fajl nadje maticni xml tag, unutar njega
@@ -37,6 +37,6 @@ namespace ChipTagValidator
 
 
 
-        public abstract List<string> Parse(string filePath);
+        public abstract List<TagModel> Parse(string filePath);
     }
 }

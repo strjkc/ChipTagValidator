@@ -52,7 +52,7 @@ namespace ChipTagValidator
 
         private TagModel BuildTagFromData(TableRow row) {
             var tagBuilder = new TagBuilder();
-            // TODO: add error handling for out of bounds exceptions
+            // TODO: add mandatory field
             try
             {
                 string internalTagText = row.ChildElements[columnForInternalTags].InnerText.Trim();
@@ -63,7 +63,10 @@ namespace ChipTagValidator
                 tagBuilder.StandardTagname = ContainsInvalidValues(standardTagText) ? "" : standardTagText;
                 tagBuilder.TemplateTag = ContainsInvalidValues(templateTagText) ? "" : templateTagText;
             }
-            catch (Exception e) { }
+            catch (Exception e) {
+                throw new IndexOutOfRangeException("Unable to retreive values from clumns under given indexes");
+                Debug.WriteLine($"Column count : {row.ChildElements.Count}, indexes provided: {columnForInternalTags}, {columnForStandardTags}, {columnForTemplateTags}");
+            }
             return tagBuilder.BuildTag();
         }
 
