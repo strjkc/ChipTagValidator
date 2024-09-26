@@ -20,20 +20,18 @@ namespace ChipTagValidator
             List<TagModel> result = new List<TagModel>();
             XmlDocument doc = LoadXmlFile(filePath);
             XmlNodeList rootNodes = doc.GetElementsByTagName(rootTag);
-            foreach (XmlNode node in rootNodes) {
-                string type = node.Attributes.GetNamedItem(tagDescription).InnerText;
-                foreach (XmlNode node2 in node.ChildNodes) {
-                    string tagName = node2.Attributes.GetNamedItem(MastercardXmlParser.tagName).InnerText;
-                    if (tagName.Length > 0)
+            foreach (XmlNode typeNode in rootNodes) {
+                string type = typeNode.Attributes.GetNamedItem(tagDescription).InnerText;
+                foreach (XmlNode tagNode in typeNode.ChildNodes) {
+                    string tagName = tagNode.Attributes.GetNamedItem(MastercardXmlParser.tagName).InnerText;
+                    if (tagName != "")
                     {
                         TagBuilder tagBuilder = new TagBuilder();
-                        string value = node2.Attributes.GetNamedItem(tagValue).InnerText;
-                        tagBuilder.Value = value;
-                        int lengthInt = value.Length / 2;
-
-
-                        string length = lengthInt < 10 ? "0"+ lengthInt : lengthInt.ToString();
-//                        result.Add(tagName + length + value + "{" + type + "}");
+                        tagBuilder.StandardTagname = tagName;
+                        tagBuilder.Value = tagNode.Attributes.GetNamedItem(tagValue).InnerText;
+                        tagBuilder.Length = (tagBuilder.Value.Length / 2).ToString("X2");
+                        tagBuilder.IsCless = type.Contains("contactless");
+                        result.Add(tagBuilder.BuildTag());
                     }
                 }
             }

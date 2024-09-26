@@ -22,7 +22,7 @@ namespace TagsParser.Classes
             List<List<TagModel>> fileCardTags = new List<List<TagModel>>();
             foreach (string chipDatastring in chipDatastrings)
             {
-                var tagsInCard = ParseEmbossData(chipDatastring);
+                List<TagModel> tagsInCard = ParseEmbossData(RemoveHeader(chipDatastring));
                 fileCardTags.Add(tagsInCard);
             }
             return fileCardTags;
@@ -41,7 +41,8 @@ namespace TagsParser.Classes
                 TagModel validTag = IsTagValid(tagOf2) ?? IsTagValid(tagOf4);
                 if (validTag != null)
                 {
-                    TagModel tag = ParseTagFromString(i, chipDatastring, validTag);
+                    TagBuilder tagToBuild = ParseTagFromString(i, chipDatastring, validTag);
+                    TagModel tag = tagToBuild.BuildTag();
                     tagsInCard.Add(tag);
                     i += GetNewPosition(tag);
                 }
@@ -54,6 +55,7 @@ namespace TagsParser.Classes
 
             return tagsInCard;
         }
+        
 
         private int GetNewPosition(TagModel tag)
         {
@@ -61,7 +63,7 @@ namespace TagsParser.Classes
         }
 
         //tag type cless/contact should be determined before creating a tag object
-        private TagModel ParseTagFromString(int currentIndex, string chipDataString, TagModel validTag)
+        private TagBuilder ParseTagFromString(int currentIndex, string chipDataString, TagModel validTag)
         {
             //this is safe because the name of the tag already matched the InternalTagName
             int tagNameLength = validTag.InternalTagName.Length;
@@ -75,7 +77,7 @@ namespace TagsParser.Classes
             TagBuilder tagBuilder = new TagBuilder().Copy(validTag);
             tagBuilder.Length = tagLengthHex;
             tagBuilder.Value = tagValue;
-            return tagBuilder.BuildTag();
+            return tagBuilder;
         }
 
         private TagModel IsTagValid(string tag)

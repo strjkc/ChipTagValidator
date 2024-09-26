@@ -13,14 +13,14 @@ namespace ChipTagValidator
 
 
 
-        public string StandardTagname {private get; set; }
-        public string InternalTagName { private get; set; }
-        public string Length { private get;  set; }
-        public string Value { private get; set; }
-        public string TemplateTag { private get; set; }
-        public bool IsCless { private get; set; }
-        public bool HasTemplateTag { private get; set; }
-        public bool IsMandatory { private get; set; }
+        public string StandardTagname { get; set; }
+        public string InternalTagName {  get; set; }
+        public string Length {  get;  set; }
+        public string Value {  get; set; }
+        public string TemplateTag {  get; set; }
+        public bool IsCless {  get; set; }
+        public bool HasTemplateTag {  get; set; }
+        public bool IsMandatory {  get; set; }
 
 
         public TagModel BuildTag() {

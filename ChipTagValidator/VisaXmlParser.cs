@@ -32,7 +32,7 @@ namespace ChipTagValidator
                     tagBuilder.StandardTagname = tagNodes[i].InnerText;
                     tagBuilder.Length = lengthNodes[i].InnerText;
                     tagBuilder.Value = valueNodes[i].InnerText;
-                    tagBuilder.IsCless = typeNodes[i].Attributes.GetNamedItem(_attribute).InnerText.Contains("qVSDC") ? true : false;
+                    tagBuilder.IsCless = typeNodes[i].Attributes.GetNamedItem(_attribute).InnerText.Contains("qVSDC");
                     result.Add(tagBuilder.BuildTag());
                 }
             }
