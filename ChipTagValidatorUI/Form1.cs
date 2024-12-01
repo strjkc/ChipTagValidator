@@ -27,6 +27,9 @@ namespace ChipTagValidatorUI
             {
 
                 List<TagModel> validTags = sp.Parse(@"C:\Users\Strahinja\Desktop\Embossing_Spec_Strahinja.docx");
+                ValidTagCacher vt = new ValidTagCacher();
+                vt.CreateCache(validTags);
+                List<TagModel> validTags2 = vt.LoadCache();
                 List<string> parsedCards = binParser.Parse(@"C:\Users\Strahinja\Downloads\abiCvbd231122001.txt");
                 ChipDataParser cp = new ChipDataParser(validTags);
                 List<List<TagModel>> tml =  cp.ParseChipDataStrings(parsedCards);
