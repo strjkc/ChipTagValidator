@@ -5,12 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using TagsParser.Classes;
 
-namespace ChipTagValidator
+namespace ChipTagValidator.Interfaces
 {
-    public interface ICacher
+    public interface IReportPrinter
     {
-        public void CreateCache(List<TagModel> validTags);
-        public List<TagModel> LoadCache();
-
+        public void WriteReport(List<CardModel> cards, string reportName);
     }
 }

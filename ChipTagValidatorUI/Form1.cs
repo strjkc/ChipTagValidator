@@ -6,9 +6,9 @@ using TagsParser.Classes;
 
 namespace ChipTagValidatorUI
 {
-    public partial class Form1 : Form
+    public partial class formWindow : Form
     {
-        public Form1()
+        public formWindow()
         {
             InitializeComponent();
         }
@@ -32,13 +32,14 @@ namespace ChipTagValidatorUI
                 List<TagModel> validTags2 = vt.LoadCache();
                 List<string> parsedCards = binParser.Parse(@"C:\Users\Strahinja\Downloads\abiCvbd231122001.txt");
                 ChipDataParser cp = new ChipDataParser(validTags);
-                List<List<TagModel>> tml =  cp.ParseChipDataStrings(parsedCards);
+                List<List<TagModel>> tml = cp.ParseChipDataStrings(parsedCards);
 
                 XmlParser xmlParser = new VisaXmlParser();
                 List<TagModel> vpaTags = xmlParser.Parse(@"C:\Users\Strahinja\Downloads\visa.xml");
                 Comparator comp = new Comparator();
                 List<CardModel> cards = new List<CardModel>();
-                foreach(List<TagModel> list in tml) {
+                foreach (List<TagModel> list in tml)
+                {
                     CardModel card = new CardModel();
                     comp.Compare(list, vpaTags, card);
                     card.AllChipData = list;
@@ -48,9 +49,76 @@ namespace ChipTagValidatorUI
                 ReportPrinter reportPrinter = new ReportPrinter();
                 reportPrinter.WriteReport(cards, "abiCards");
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Console.WriteLine(ex.Message);
             }
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void openFileDialog2_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+        }
+
+        private void embossFileButton_Click(object sender, EventArgs e)
+        {
+            // Create an instance of OpenFileDialog
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Title = "Select a File",
+                Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
+            };
+
+            // Show the dialog and check if the user selected a file
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Display the selected file path in the TextBox
+                embossFileTextBox.Text = openFileDialog.FileName;
+            }
+        }
+
+        private void chipFormButton_Click(object sender, EventArgs e)
+        {
+            // Create an instance of OpenFileDialog
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Title = "Select a File",
+                Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*"
+            };
+
+            // Show the dialog and check if the user selected a file
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Display the selected file path in the TextBox
+                chipFormTextBox.Text = openFileDialog.FileName;
+            }
+        }
+
+        private void specificationButton_Click(object sender, EventArgs e)
+        {
+            // Create an instance of OpenFileDialog
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Title = "Select a File",
+                Filter = "Word Files (*.docx)|*.docx|All Files (*.*)|*.*|Word Files (*.doc)|*.doc"
+            };
+
+            // Show the dialog and check if the user selected a file
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Display the selected file path in the TextBox
+                specificationTextBox.Text = openFileDialog.FileName;
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
 
         }
     }
