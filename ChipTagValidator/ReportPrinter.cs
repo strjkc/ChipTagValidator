@@ -11,8 +11,7 @@ namespace ChipTagValidator
 {
     public class ReportPrinter : IReportPrinter
     {
-        public string ReportName { get; set; } = "\\ParsedFile.txt";
-
+        private string _reportSufix = "_parsed.txt";
         private const string _missmatchTagsTitle = "#### Missmatch in values: #####\n";
         private const string _duplicateTagsTitle = "#### Duplicate Tags: ####\n";
         private const string _missingTagsTitle = "#### Tags Missing From Chip Form: ####\n";
@@ -42,8 +41,8 @@ namespace ChipTagValidator
             EndLine(writer);
         }
 
-        public void WriteReport(List<CardModel> cards) { 
-            using(StreamWriter writer = new StreamWriter(_reportLocation+ReportName))
+        public void WriteReport(List<CardModel> cards, string reportName) { 
+            using(StreamWriter writer = new StreamWriter(_reportLocation+reportName+_reportSufix))
             {
                 foreach(CardModel card in cards)
                 {

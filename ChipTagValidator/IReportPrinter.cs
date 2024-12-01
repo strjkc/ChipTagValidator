@@ -9,6 +9,6 @@ namespace ChipTagValidator
 {
     public interface IReportPrinter
     {
-        public void WriteReport(List<CardModel> cards);
+        public void WriteReport(List<CardModel> cards, string reportName);
     }
 }

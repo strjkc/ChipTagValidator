@@ -43,7 +43,7 @@ namespace ChipTagValidatorUI
                     cards.Add(card);
                 }
                 ReportPrinter reportPrinter = new ReportPrinter();
-                reportPrinter.WriteReport(cards);
+                reportPrinter.WriteReport(cards, "abiCards");
             }
             catch (Exception ex) {
                 Console.WriteLine(ex.Message);
