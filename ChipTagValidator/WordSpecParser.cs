@@ -14,7 +14,7 @@ namespace ChipTagValidator
     public class WordSpecParser
     {
         //TODO: these should be extracted to parameter values
-        private const int expectedColumnCount = 5;
+        private const int expectedColumnCount = 6;
         private const int startFromTable = 5;
         private string[] invalidValues = { "n/a", "/", "", " "};
         int columnForInternalTags = 1;

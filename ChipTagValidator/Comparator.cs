@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.Spreadsheet;
 using TagsParser.Classes;
 
 namespace ChipTagValidator;
@@ -10,7 +11,7 @@ public class Comparator
      *
      * 
      * trebaju mi nekoliko globalnih lista
-     * duplicates
+     * Duplicates
      * mandatory tags missing
      * form tags missing
      * mismatch in values
@@ -21,66 +22,41 @@ public class Comparator
      * ako nije i dosli smo do kraja dodaj u listu
      */
 
-    private List<TagModel> duplicates;
-    private Dictionary<string, TagModel[]> missmatchInValues;
-    private List<TagModel> formTagsMissing;
-    private List<TagModel> mandatoryTagsMissing;
-    private List<TagModel> embossTags;
-    private List<TagModel> formTags;
 
-    public Comparator(List<TagModel> formTags, List<TagModel> embossTags)
-    {
-        this.embossTags = embossTags;
-        this.formTags = formTags;
-    }
-
-    public void Compare()
+    //TODO: List of non mandatory non vpa tags in emboss file
+    public void Compare(List<TagModel> embossTags, List<TagModel> formTags, CardModel Card)
     {
         foreach (TagModel formTag in formTags)
         {
-            bool tagIsFound = false;
-            foreach (TagModel embossTag in embossTags)
+            TagModel tagFound = formTag.IsCless
+                ? embossTags.FirstOrDefault(embossTag => formTag.StandardTagname == embossTag.StandardTagname)
+                : embossTags.FirstOrDefault(embossTag => formTag.StandardTagname == embossTag.InternalTagName);
+
+            if (tagFound != null)
             {
-                //if the tag is contactless I want to compare the standard tag names
-                if (formTag.IsCless)
+                if (tagFound.Value != formTag.Value)
                 {
-                    if (formTag.StandardTagname == embossTag.StandardTagname)
-                    {
-                        if (formTag.Value != embossTag.Value)
-                        {
-                            missmatchInValues.Add(formTag.StandardTagname, new TagModel[]{formTag, embossTag});
-                        }
-                        tagIsFound = true;
-                    }
-                }
-                else
-                {
-                    if (formTag.StandardTagname == embossTag.InternalTagName)
-                    {
-                        if (formTag.Value != embossTag.Value)
-                        {
-                            missmatchInValues.Add(formTag.StandardTagname, new TagModel[]{formTag, embossTag});
-                        }
-                        tagIsFound = true;
-                    }
-                }
-                if (!tagIsFound)
-                {
-                    formTagsMissing.Add(formTag);
+                    List<TagModel> tagList = new List<TagModel>();
+                    tagList.Add(formTag);
+                    tagList.Add(tagFound);
+                    Card.MissmatchInValues.Add(tagList);
                 }
             }
+            else
+            {
+                Card.FormTagsMissing.Add(formTag);
+            }
         }
-        CheckForDuplicates();
     }
 
-    private void CheckForDuplicates()
+    public void CheckForDuplicates(List<TagModel> embossTags, CardModel Card)
     {
         HashSet<TagModel> seen = new HashSet<TagModel>();
         foreach (TagModel embossTag in embossTags)
         {
             if (!seen.Add(embossTag))
             {
-                duplicates.Add(embossTag);
+                Card.Duplicates.Add(embossTag);
             }
         }
     }

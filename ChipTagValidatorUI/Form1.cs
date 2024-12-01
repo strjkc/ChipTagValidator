@@ -32,9 +32,18 @@ namespace ChipTagValidatorUI
                 List<List<TagModel>> tml =  cp.ParseChipDataStrings(parsedCards);
 
                 XmlParser xmlParser = new VisaXmlParser();
-//                List<string> vpaTags = xmlParser.Parse(@"C:\Users\Strahinja\Downloads\visa.xml");
-                
-
+                List<TagModel> vpaTags = xmlParser.Parse(@"C:\Users\Strahinja\Downloads\visa.xml");
+                Comparator comp = new Comparator();
+                List<CardModel> cards = new List<CardModel>();
+                foreach(List<TagModel> list in tml) {
+                    CardModel card = new CardModel();
+                    comp.Compare(list, vpaTags, card);
+                    card.AllChipData = list;
+                    card.PAN = list.FirstOrDefault(tag => tag.InternalTagName == "5A").Value;
+                    cards.Add(card);
+                }
+                ReportPrinter reportPrinter = new ReportPrinter();
+                reportPrinter.WriteReport(cards);
             }
             catch (Exception ex) {
                 Console.WriteLine(ex.Message);
