@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ChipTagValidator.Interfaces;
+using Serilog;
+using Serilog.Core;
 
 namespace TagsParser.Classes
 {
@@ -24,7 +26,8 @@ namespace TagsParser.Classes
             try
             {
 
-
+                Log.Information($"Trying to parse the binary file on {filePath}");
+                int cardCounterForLog = 1;
                 //StreamReader streamReader = new StreamReader(filePath);
                 BinaryReader streamReader = new BinaryReader(stream);
                 StringBuilder currentstring = new StringBuilder();
@@ -36,8 +39,14 @@ namespace TagsParser.Classes
                 while (streamReader.BaseStream.Position != streamReader.BaseStream.Length)
                 {
                     int currentInt = (Int16)bytes;
-
                     char data = (char)currentInt;
+                    Log.Debug("State of variables");
+                    Log.Debug($" cardCounterForLog {cardCounterForLog} currentstring, {currentstring.ToString()}, currentInt {currentInt}, data {data}, chipDataStart {chipDataStart}");
+                    Log.Debug("chipDatastrings[]");
+                    foreach (string s in chipDatastrings) {
+                        Log.Debug($"{s}");
+                    }
+
 
                     if (chipDataStart)
                     {
@@ -49,6 +58,7 @@ namespace TagsParser.Classes
 
                             if (lastCharactersOfBuilder.Equals(cardEnd))
                             {
+                                Log.Information($"Reached end of card {cardCounterForLog++}");
                                 chipDataStart = false;
                                 chipDatastrings.Add(currentstring.ToString());
                                 currentstring.Clear();
@@ -62,11 +72,19 @@ namespace TagsParser.Classes
                         chipDataStart = true;
                     bytes = streamReader.ReadByte();
                 }
+                Log.Information($"Exporting {chipDatastrings.Count} chip data strings:");
+                foreach (string s in chipDatastrings)
+                {
+                    Log.Information($"{s}");
+
+                }
+                stream.Close();
                 return chipDatastrings;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("error");
+                Log.Error("Failed to parse binary file");
+                Log.Error(ex.StackTrace);
                 return null;
             }
         }

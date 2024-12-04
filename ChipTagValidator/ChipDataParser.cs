@@ -1,4 +1,6 @@
 ﻿using ChipTagValidator;
+using ChipTagValidator.Models;
+using Serilog;
 using System.Diagnostics;
 using System.Text;
 
@@ -30,29 +32,36 @@ namespace TagsParser.Classes
 
         private List<TagModel> ParseEmbossData(string chipDatastring)
         {
+            Log.Information($"Parsing chip data string {chipDatastring}");
             List<TagModel> tagsInCard = new List<TagModel>();
-            //sanitization should not be a mandatory step
             int i = 0;
             while (i < chipDatastring.Length)
             {
                 string tagOf2 = chipDatastring.Substring(i, 2);
                 string tagOf4 = chipDatastring.Substring(i, 4);
-                //instead of isValidTag i can use IndexOf and check if index is >= 0
                 TagModel validTag = IsTagValid(tagOf2) ?? IsTagValid(tagOf4);
                 if (validTag != null)
                 {
+                    Log.Debug($"Found Valid Tag {validTag.InternalTagName}");
                     TagBuilder tagToBuild = ParseTagFromString(i, chipDatastring, validTag);
                     TagModel tag = tagToBuild.BuildTag();
+                    Log.Debug($"Parsed TLV value: {tag.InternalTagName} {tag.Length} {tag.Value}");
                     tagsInCard.Add(tag);
                     i += GetNewPosition(tag);
                 }
                 else
                 {
-                    Debug.WriteLine($"tags: {tagOf2} and {tagOf4} index: {i}");
+                    Log.Error("Emboss file contains an invalid tag!");
+                    Log.Error($"tags: {tagOf2} and {tagOf4} at position {i} in chip data string");
                     throw new InvalidOperationException("Emboss file contains an invalid tag");
                 }
             }
-
+            StringBuilder sb = new StringBuilder();
+            foreach (TagModel tag in tagsInCard)
+            {
+                sb.Append($"{tag.InternalTagName} {tag.StandardTagname} {tag.TemplateTag} {tag.Length} {tag.Value}, ");  
+            }
+            Log.Information($"Parsed values of current string: {sb.ToString()}");
             return tagsInCard;
         }
         
@@ -77,6 +86,7 @@ namespace TagsParser.Classes
             TagBuilder tagBuilder = new TagBuilder().Copy(validTag);
             tagBuilder.Length = tagLengthHex;
             tagBuilder.Value = tagValue;
+
             return tagBuilder;
         }
 
@@ -92,10 +102,15 @@ namespace TagsParser.Classes
 
         public string RemoveHeader(string chipstring)
         {
+            Log.Information("Removing header and trailer from the chip data block");
             string removedHeader = chipstring.Substring(lenOfChipHeader);
+            Log.Debug($"Removed header form chip data string: {chipstring.Substring(0, lenOfChipHeader)}");
             int lengthOfTrailer = lenOfMacIdData + lenOfEndDelimiter;
             int lengthWithoutTrailer = removedHeader.Length - lengthOfTrailer;
-            return removedHeader.Substring(0, lengthWithoutTrailer);
+            Log.Debug($"Removed Trailer form chip data string: {removedHeader.Substring(removedHeader.Length - lengthOfTrailer)}");
+            string chipDataString = removedHeader.Substring(0, lengthWithoutTrailer);
+            Log.Debug($"Returning chip data string without header and trailer: {chipDataString}");
+            return chipDataString;
         }
     }
 }

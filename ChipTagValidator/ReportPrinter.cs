@@ -1,12 +1,13 @@
 ﻿using ChipTagValidator.Interfaces;
+using ChipTagValidator.Models;
 using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Drawing;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TagsParser.Classes;
 
 namespace ChipTagValidator
 {
@@ -42,9 +43,11 @@ namespace ChipTagValidator
             EndLine(writer);
         }
 
-        public void WriteReport(List<CardModel> cards, string reportName) { 
-            using(StreamWriter writer = new StreamWriter(_reportLocation+reportName+_reportSufix))
+        public void WriteReport(List<CardModel> cards, string reportName) {
+            string reportPath = _reportLocation + reportName + _reportSufix;
+            using (StreamWriter writer = new StreamWriter(reportPath))
             {
+                Log.Information($"Creating Report: {reportPath}");
                 foreach(CardModel card in cards)
                 {
                     WriteTags(card.AllChipData, "Details for card " + card.PAN + " :\n", writer);

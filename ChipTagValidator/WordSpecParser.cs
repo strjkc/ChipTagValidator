@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TagsParser.Classes;
 using System.Reflection;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Diagnostics;
+using ChipTagValidator.Models;
+using Serilog;
 
 namespace ChipTagValidator
 {
     public class WordSpecParser
     {
         //TODO: these should be extracted to parameter values
+        //TODO add further logging
         private const int expectedColumnCount = 6;
         private const int startFromTable = 5;
         private string[] invalidValues = { "n/a", "/", "", " "};
@@ -23,6 +25,7 @@ namespace ChipTagValidator
         int columnForMandatoryTags = 5;
 
         public List<TagModel> Parse(string file) {
+            Log.Information($"Parsing Emboss file specification: {file}");
             List<TagModel> tagModels = new List<TagModel>();
 
             using WordprocessingDocument doc = WordprocessingDocument.Open(file, false) 

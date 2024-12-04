@@ -4,13 +4,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using TagsParser.Classes;
+using ChipTagValidator.Models;
+using Serilog;
 
 namespace ChipTagValidator
 {
     public class VisaXmlParser: XmlParser
     {
-        //TODO: Should not be property, make private field
+        //TODO include template tags 
+
+
+        /* Visa Model:
+            <tagelement>
+                <tagname category="qVSDC">Application Capabilities</tagname>
+                <tag>DF01</tag>
+                <templatetag>BF5B</templatetag>
+                <taglength>02</taglength>
+                <tagvalue>8000</tagvalue>
+            </tagelement>
+            <tagelement>
+                <tagname category="qVSDC">Form Factor Indicator</tagname>
+                <tag>9F6E</tag>
+                <taglength>04</taglength>
+                <tagvalue>40700D00</tagvalue>
+            </tagelement>
+         */
+
         private string _tagelement = "tag";
         private string _lengthElement = "taglength";
         private string _valueElement = "tagvalue";
@@ -32,16 +51,23 @@ namespace ChipTagValidator
                     tagBuilder.StandardTagname = tagNodes[i].InnerText;
                     tagBuilder.Length = lengthNodes[i].InnerText;
                     tagBuilder.Value = valueNodes[i].InnerText;
-                    // mora da ima samo qvsdc ako je cless 
                     tagBuilder.IsCless = typeNodes[i].Attributes.GetNamedItem(_attribute).InnerText.Equals("qVSDC");
                     result.Add(tagBuilder.BuildTag());
                 }
             }
             else
             {
+                Log.Error("Mimatch in number of tags");
+                Log.Error($"tagNodes: {tagNodes.Count},  lengthNodes: {lengthNodes.Count}, valueNodes:  {valueNodes.Count}");
+                throw new Exception("Mimatch in number of tags");
                 //throw exception that there is a mismatch in the amount of tags the form is not valid
             }
-
+            StringBuilder sb = new StringBuilder();
+            foreach (TagModel tag in result)
+            {
+                sb.Append($"StandardTagname: {tag.StandardTagname} InternalTagName: {tag.InternalTagName} TemplateTag: {tag.TemplateTag} TagLength: {tag.Length} TagValue: {tag.Value} IsCless: {tag.IsCless}, ");
+            }
+            Log.Information($"Parsed from XML file: {sb.ToString()}");
             return result;
         }
     }

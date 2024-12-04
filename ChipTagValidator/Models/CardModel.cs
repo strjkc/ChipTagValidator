@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TagsParser.Classes
+namespace ChipTagValidator.Models
 {
     public class CardModel
     {
-        public String PAN { get; set; }
+        public string PAN { get; set; }
         public List<TagModel> AllChipData { get; set; }
         public List<TagModel> Duplicates { get; set; } = new List<TagModel>();
 

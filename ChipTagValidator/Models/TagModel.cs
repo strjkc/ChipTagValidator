@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TagsParser.Classes
+namespace ChipTagValidator.Models
 {
     public class TagModel
     {
@@ -32,7 +32,7 @@ namespace TagsParser.Classes
 
         public TagModel Clone()
         {
-            return (TagModel) this.MemberwiseClone();
+            return (TagModel)MemberwiseClone();
         }
     }
 }

@@ -47,6 +47,7 @@
             openFileDialog2 = new OpenFileDialog();
             logTextBox = new RichTextBox();
             contextMenuStrip1 = new ContextMenuStrip(components);
+            debugLogCheckbox = new CheckBox();
             SuspendLayout();
             // 
             // openFileDialog1
@@ -61,6 +62,7 @@
             parseButton.TabIndex = 1;
             parseButton.Text = "Parse";
             parseButton.UseVisualStyleBackColor = true;
+            parseButton.Click += parseButton_Click;
             // 
             // embossFileTextBox
             // 
@@ -128,7 +130,6 @@
             embossFileLabel.Size = new Size(69, 15);
             embossFileLabel.TabIndex = 11;
             embossFileLabel.Text = "Emboss File";
-            embossFileLabel.Click += label1_Click;
             // 
             // specificationLabel
             // 
@@ -162,33 +163,41 @@
             logLabel.AutoSize = true;
             logLabel.Location = new Point(27, 259);
             logLabel.Name = "logLabel";
-            logLabel.Size = new Size(27, 15);
+            logLabel.Size = new Size(51, 15);
             logLabel.TabIndex = 15;
-            logLabel.Text = "Log";
-            // 
-            // openFileDialog2
-            // 
-            openFileDialog2.FileName = "openFileDialog2";
-            openFileDialog2.FileOk += openFileDialog2_FileOk;
+            logLabel.Text = "Info Log";
             // 
             // logTextBox
             // 
-            logTextBox.Location = new Point(27, 286);
+            logTextBox.Location = new Point(27, 294);
             logTextBox.Name = "logTextBox";
             logTextBox.Size = new Size(761, 250);
             logTextBox.TabIndex = 16;
             logTextBox.Text = "";
+            logTextBox.WordWrap = false;
             // 
             // contextMenuStrip1
             // 
             contextMenuStrip1.Name = "contextMenuStrip1";
             contextMenuStrip1.Size = new Size(61, 4);
             // 
+            // debugLogCheckbox
+            // 
+            debugLogCheckbox.AutoSize = true;
+            debugLogCheckbox.Location = new Point(666, 259);
+            debugLogCheckbox.Name = "debugLogCheckbox";
+            debugLogCheckbox.Size = new Size(122, 19);
+            debugLogCheckbox.TabIndex = 17;
+            debugLogCheckbox.Text = "Enable Debug Log";
+            debugLogCheckbox.UseVisualStyleBackColor = true;
+            debugLogCheckbox.CheckedChanged += debugLogCheckbox_CheckedChanged;
+            // 
             // formWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(834, 556);
+            Controls.Add(debugLogCheckbox);
             Controls.Add(logTextBox);
             Controls.Add(logLabel);
             Controls.Add(delimiterLabel);
@@ -206,7 +215,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "formWindow";
             Text = "Chip File Parser";
-            Load += Form1_Load;
+            Load += formWindow_Load;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -233,5 +242,6 @@
         private OpenFileDialog openFileDialog2;
         private RichTextBox logTextBox;
         private ContextMenuStrip contextMenuStrip1;
+        private CheckBox debugLogCheckbox;
     }
 }
