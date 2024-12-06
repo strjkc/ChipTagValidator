@@ -12,6 +12,7 @@ using ChipTagValidator.Models;
 using DocumentFormat.OpenXml.Bibliography;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using Serilog.Core;
+using ChipTagValidator.Interfaces;
 
 
 namespace ChipTagValidatorUI
@@ -19,11 +20,8 @@ namespace ChipTagValidatorUI
     public partial class formWindow : Form
     {
         LoggingLevelSwitch debugSwitch = new LoggingLevelSwitch { MinimumLevel = Serilog.Events.LogEventLevel.Information };
-        //TODO Wire up inputs
-        //TODO validate inputs
         //TODO refactor logging to methods
-        //TODO add aditional logging
-        
+        //TODO abstract factory for xml parser
         public formWindow()
         {
             InitializeComponent();
@@ -83,23 +81,41 @@ namespace ChipTagValidatorUI
         private void parseButton_Click(object sender, EventArgs e)
         {
             WordSpecParser sp = new WordSpecParser();
-            BinaryParser binParser = new BinaryParser();
+            XmlParser xmlParser = new VisaXmlParser();
+            List<TagModel> validTags = new List<TagModel>();
+            ValidTagCacher cacher = new ValidTagCacher();
+            Comparator comp = new Comparator();
+            ReportPrinter reportPrinter = new ReportPrinter();
+            List<CardModel> cards = new List<CardModel>();
+
             try
             {
                 Log.Information("Parse method running");
 
-                List<TagModel> validTags = sp.Parse(@"C:\Users\Strahinja\Desktop\Embossing_Spec_Strahinja.docx");
-                ValidTagCacher vt = new ValidTagCacher();
-                vt.CreateCache(validTags);
-                List<TagModel> validTags2 = vt.LoadCache();
-                List<string> parsedCards = binParser.Parse(@"C:\Users\Strahinja\Downloads\abiCvbd231122001.txt");
+                if (specificationTextBox.Text != "")
+                {
+                    validTags = sp.Parse(specificationTextBox.Text);
+                    cacher.CreateCache(validTags);
+                }
+                else
+                {
+                    validTags = cacher.LoadCache();
+                }
+
+                if(validTags.Count == 0)
+                {
+                    throw new InvalidDataException("No valid tags available. Provide specification or data file");
+                }
+
+                if (chipDataDelimiterTextBox.Text.Length < 1) {
+                    throw new InvalidDataException("Chip data delimiter must be provided, check your emboss specification");
+                }
+
+                BinaryParser binParser = new BinaryParser(chipDataDelimiterTextBox.Text);
+                List<string> parsedCards = binParser.Parse(embossFileTextBox.Text);
                 ChipDataParser cp = new ChipDataParser(validTags);
                 List<List<TagModel>> tml = cp.ParseChipDataStrings(parsedCards);
-
-                XmlParser xmlParser = new VisaXmlParser();
-                List<TagModel> vpaTags = xmlParser.Parse(@"C:\Users\Strahinja\Downloads\visa.xml");
-                Comparator comp = new Comparator();
-                List<CardModel> cards = new List<CardModel>();
+                List<TagModel> vpaTags = xmlParser.Parse(chipFormTextBox.Text);
                 foreach (List<TagModel> list in tml)
                 {
                     CardModel card = new CardModel();
@@ -108,15 +124,26 @@ namespace ChipTagValidatorUI
                     card.PAN = list.FirstOrDefault(tag => tag.InternalTagName == "5A").Value;
                     cards.Add(card);
                 }
-                ReportPrinter reportPrinter = new ReportPrinter();
-                reportPrinter.WriteReport(cards, "abiCards");
+                reportPrinter.WriteReport(cards, stripFileName(embossFileTextBox.Text));
+            }
+            catch (ArgumentException ex)
+            {
+                Log.Error("Emboss file field can not be empty!");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error($"{ex.Message} {ex.StackTrace}");
             }
+
         }
 
+        private string stripFileName(string fileName)
+        {
+            int indexOfBackslash = fileName.LastIndexOf("\\");
+            string fileNameFull = fileName.Substring(indexOfBackslash);
+            int indexOfDot = fileNameFull.IndexOf(".");
+            return fileNameFull.Substring(0, indexOfDot);
+        }
 
 
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using ChipTagValidator.Models;
 
-namespace ChipTagValidator
+namespace ChipTagValidator.Interfaces
 {
     public abstract class XmlParser
     {
@@ -23,15 +23,17 @@ namespace ChipTagValidator
             {
                 xmlDoc.Load(path);
             }
-            catch (Exception ex) {
-                
+            catch (Exception ex)
+            {
+
                 Console.WriteLine(ex.Message);
             }
             return xmlDoc;
         }
 
-        protected XmlNodeList GetRootElements(XmlDocument doc) { 
-            
+        protected XmlNodeList GetRootElements(XmlDocument doc)
+        {
+
             return doc.GetElementsByTagName(_rootTag);
         }
 

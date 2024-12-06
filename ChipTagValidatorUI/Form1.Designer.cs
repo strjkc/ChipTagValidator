@@ -38,7 +38,7 @@
             specificationButton = new Button();
             embossFileButton = new Button();
             chipFormButton = new Button();
-            chipDataTextBox = new TextBox();
+            chipDataDelimiterTextBox = new TextBox();
             embossFileLabel = new Label();
             specificationLabel = new Label();
             chipFormLabel = new Label();
@@ -66,14 +66,14 @@
             // 
             // embossFileTextBox
             // 
-            embossFileTextBox.Location = new Point(27, 44);
+            embossFileTextBox.Location = new Point(27, 47);
             embossFileTextBox.Name = "embossFileTextBox";
             embossFileTextBox.Size = new Size(266, 23);
             embossFileTextBox.TabIndex = 2;
             // 
             // specificationTextBox
             // 
-            specificationTextBox.Location = new Point(439, 45);
+            specificationTextBox.Location = new Point(454, 45);
             specificationTextBox.Name = "specificationTextBox";
             specificationTextBox.Size = new Size(266, 23);
             specificationTextBox.TabIndex = 3;
@@ -87,7 +87,7 @@
             // 
             // specificationButton
             // 
-            specificationButton.Location = new Point(713, 44);
+            specificationButton.Location = new Point(735, 45);
             specificationButton.Name = "specificationButton";
             specificationButton.Size = new Size(75, 24);
             specificationButton.TabIndex = 5;
@@ -115,12 +115,12 @@
             chipFormButton.UseVisualStyleBackColor = true;
             chipFormButton.Click += chipFormButton_Click;
             // 
-            // chipDataTextBox
+            // chipDataDelimiterTextBox
             // 
-            chipDataTextBox.Location = new Point(439, 108);
-            chipDataTextBox.Name = "chipDataTextBox";
-            chipDataTextBox.Size = new Size(100, 23);
-            chipDataTextBox.TabIndex = 9;
+            chipDataDelimiterTextBox.Location = new Point(454, 107);
+            chipDataDelimiterTextBox.Name = "chipDataDelimiterTextBox";
+            chipDataDelimiterTextBox.Size = new Size(100, 23);
+            chipDataDelimiterTextBox.TabIndex = 9;
             // 
             // embossFileLabel
             // 
@@ -134,7 +134,7 @@
             // specificationLabel
             // 
             specificationLabel.AutoSize = true;
-            specificationLabel.Location = new Point(439, 25);
+            specificationLabel.Location = new Point(454, 26);
             specificationLabel.Name = "specificationLabel";
             specificationLabel.Size = new Size(119, 15);
             specificationLabel.TabIndex = 12;
@@ -152,7 +152,7 @@
             // delimiterLabel
             // 
             delimiterLabel.AutoSize = true;
-            delimiterLabel.Location = new Point(439, 89);
+            delimiterLabel.Location = new Point(454, 89);
             delimiterLabel.Name = "delimiterLabel";
             delimiterLabel.Size = new Size(110, 15);
             delimiterLabel.TabIndex = 14;
@@ -171,7 +171,7 @@
             // 
             logTextBox.Location = new Point(27, 294);
             logTextBox.Name = "logTextBox";
-            logTextBox.Size = new Size(761, 250);
+            logTextBox.Size = new Size(783, 250);
             logTextBox.TabIndex = 16;
             logTextBox.Text = "";
             logTextBox.WordWrap = false;
@@ -184,7 +184,7 @@
             // debugLogCheckbox
             // 
             debugLogCheckbox.AutoSize = true;
-            debugLogCheckbox.Location = new Point(666, 259);
+            debugLogCheckbox.Location = new Point(688, 259);
             debugLogCheckbox.Name = "debugLogCheckbox";
             debugLogCheckbox.Size = new Size(122, 19);
             debugLogCheckbox.TabIndex = 17;
@@ -196,7 +196,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(834, 556);
+            ClientSize = new Size(834, 568);
             Controls.Add(debugLogCheckbox);
             Controls.Add(logTextBox);
             Controls.Add(logLabel);
@@ -204,7 +204,7 @@
             Controls.Add(chipFormLabel);
             Controls.Add(specificationLabel);
             Controls.Add(embossFileLabel);
-            Controls.Add(chipDataTextBox);
+            Controls.Add(chipDataDelimiterTextBox);
             Controls.Add(chipFormButton);
             Controls.Add(embossFileButton);
             Controls.Add(specificationButton);
@@ -232,7 +232,7 @@
         private Button embossFileButton;
         private Button chipFormButton;
         private Button button6;
-        private TextBox chipDataTextBox;
+        private TextBox chipDataDelimiterTextBox;
         private Label embossFileLabel;
         private Label specificationLabel;
         private Label chipFormLabel;

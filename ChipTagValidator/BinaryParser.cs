@@ -10,16 +10,14 @@ using Serilog.Core;
 
 namespace TagsParser.Classes
 {
-    public class BinaryParser : IParser
+    public class BinaryParser : IBinaryParser
     {
 
-        public List<String> Parse(string filePath)
-        {
-            return ParseFile(filePath);
-        }
+        private string _chipDataDelimiter;
 
+        public BinaryParser(string chipDataDelimiter) {  _chipDataDelimiter = chipDataDelimiter; }
 
-        public List<string> ParseFile(string filePath)
+        public List<string> Parse(string filePath)
 
         {
             var stream = File.Open(filePath, FileMode.Open);
@@ -31,6 +29,7 @@ namespace TagsParser.Classes
                 //StreamReader streamReader = new StreamReader(filePath);
                 BinaryReader streamReader = new BinaryReader(stream);
                 StringBuilder currentstring = new StringBuilder();
+                StringBuilder chipDataString = new StringBuilder();
                 string cardEnd = "#END#";
                 Boolean chipDataStart = false;
                 List<string> chipDatastrings = new List<string>();
@@ -41,35 +40,43 @@ namespace TagsParser.Classes
                     int currentInt = (Int16)bytes;
                     char data = (char)currentInt;
                     Log.Debug("State of variables");
-                    Log.Debug($" cardCounterForLog {cardCounterForLog} currentstring, {currentstring.ToString()}, currentInt {currentInt}, data {data}, chipDataStart {chipDataStart}");
+                    Log.Debug($" cardCounterForLog {cardCounterForLog} chipDataString, {chipDataString.ToString()}, currentInt {currentInt}, data {data}, chipDataStart {chipDataStart}");
                     Log.Debug("chipDatastrings[]");
                     foreach (string s in chipDatastrings) {
                         Log.Debug($"{s}");
                     }
 
+                    if (currentstring.Length >= _chipDataDelimiter.Length)
+                    {
+                        string curr = currentstring.ToString().Substring(currentstring.Length - _chipDataDelimiter.Length);
+                        if (currentstring.ToString().Substring(currentstring.Length - _chipDataDelimiter.Length) == _chipDataDelimiter)
+                            chipDataStart = true;
+                    }
+                    currentstring.Append((char)currentInt);
+
 
                     if (chipDataStart)
                     {
-                        currentstring.Append(currentInt.ToString("X2"));
+                        chipDataString.Append(currentInt.ToString("X2"));
                         //char data = (char)currentCharacter;
-                        if ((char)currentInt == '#' && currentstring.Length > 10)
+                        if ((char)currentInt == '#' && chipDataString.Length > 10)
                         {
-                            string lastCharactersOfBuilder = HexToChar(currentstring.ToString().Substring(currentstring.Length - 10));
+                            string lastCharactersOfBuilder = HexToChar(chipDataString.ToString().Substring(chipDataString.Length - 10));
 
                             if (lastCharactersOfBuilder.Equals(cardEnd))
                             {
                                 Log.Information($"Reached end of card {cardCounterForLog++}");
                                 chipDataStart = false;
-                                chipDatastrings.Add(currentstring.ToString());
-                                currentstring.Clear();
+                                chipDatastrings.Add(chipDataString.ToString());
+                                chipDataString.Clear();
 
                             }
                         }
 
                     }
 
-                    if ((char)currentInt == '{')
-                        chipDataStart = true;
+
+                    
                     bytes = streamReader.ReadByte();
                 }
                 Log.Information($"Exporting {chipDatastrings.Count} chip data strings:");

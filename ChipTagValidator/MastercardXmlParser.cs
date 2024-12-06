@@ -1,4 +1,5 @@
-﻿using ChipTagValidator.Models;
+﻿using ChipTagValidator.Interfaces;
+using ChipTagValidator.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
