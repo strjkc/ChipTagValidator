@@ -8,7 +8,7 @@ using ChipTagValidator.Models;
 
 namespace ChipTagValidator.Interfaces
 {
-    public abstract class XmlParser
+    public abstract class XmlParser : AbstractChipFileParser<XmlDocument>
     {
         //da li parsira vpa ili cpv
         //primi fajl nadje maticni xml tag, unutar njega
@@ -16,7 +16,7 @@ namespace ChipTagValidator.Interfaces
 
         protected string _rootTag;
 
-        protected XmlDocument LoadXmlFile(string path)
+        protected override XmlDocument LoadFile(string path)
         {
             XmlDocument xmlDoc = new XmlDocument();
             try
@@ -40,5 +40,7 @@ namespace ChipTagValidator.Interfaces
 
 
         public abstract List<TagModel> Parse(string filePath);
+
+
     }
 }

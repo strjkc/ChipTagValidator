@@ -17,7 +17,7 @@ namespace ChipTagValidator
         private const string _missmatchTagsTitle = "#### Missmatch in values: #####\n";
         private const string _duplicateTagsTitle = "#### Duplicate Tags: ####\n";
         private const string _missingTagsTitle = "#### Tags Missing From Chip Form: ####\n";
-        private string _reportLocation = ".\\";
+        private string _reportLocation = ".\\Parsed";
         private string lineEndCharacters = "";
 
         private void EndLine(StreamWriter writer)
@@ -44,6 +44,8 @@ namespace ChipTagValidator
         }
 
         public void WriteReport(List<CardModel> cards, string reportName) {
+            if (!Directory.Exists(_reportLocation))
+                Directory.CreateDirectory(_reportLocation);
             string reportPath = _reportLocation + reportName + _reportSufix;
             using (StreamWriter writer = new StreamWriter(reportPath))
             {
