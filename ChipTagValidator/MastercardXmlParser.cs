@@ -38,7 +38,7 @@ namespace ChipTagValidator
         {
             Log.Information($"Parsing file {filePath}");
             List<TagModel> result = new List<TagModel>();
-            XmlDocument doc = LoadFile(filePath);
+            XmlDocument doc = LoadFile<XmlDocument>(filePath);
             XmlNodeList rootNodes = doc.GetElementsByTagName(rootTag);
             foreach (XmlNode typeNode in rootNodes) {
                 string type = typeNode.Attributes.GetNamedItem(tagDescription).InnerText;

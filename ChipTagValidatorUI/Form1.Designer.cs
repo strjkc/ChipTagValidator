@@ -48,6 +48,7 @@
             logTextBox = new RichTextBox();
             contextMenuStrip1 = new ContextMenuStrip(components);
             debugLogCheckbox = new CheckBox();
+            brandComboBox = new ComboBox();
             SuspendLayout();
             // 
             // openFileDialog1
@@ -192,11 +193,22 @@
             debugLogCheckbox.UseVisualStyleBackColor = true;
             debugLogCheckbox.CheckedChanged += debugLogCheckbox_CheckedChanged;
             // 
+            // brandComboBox
+            // 
+            brandComboBox.FormattingEnabled = true;
+            brandComboBox.Items.AddRange(new object[] { "Visa", "Mastercard" });
+            brandComboBox.Location = new Point(621, 105);
+            brandComboBox.Name = "brandComboBox";
+            brandComboBox.Size = new Size(121, 23);
+            brandComboBox.TabIndex = 18;
+            brandComboBox.SelectedText = "Visa";
+            // 
             // formWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(834, 568);
+            Controls.Add(brandComboBox);
             Controls.Add(debugLogCheckbox);
             Controls.Add(logTextBox);
             Controls.Add(logLabel);
@@ -243,5 +255,6 @@
         private RichTextBox logTextBox;
         private ContextMenuStrip contextMenuStrip1;
         private CheckBox debugLogCheckbox;
+        private ComboBox brandComboBox;
     }
 }

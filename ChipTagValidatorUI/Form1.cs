@@ -81,7 +81,6 @@ namespace ChipTagValidatorUI
         private void parseButton_Click(object sender, EventArgs e)
         {
             WordSpecParser sp = new WordSpecParser();
-            XmlParser xmlParser = new VisaXmlParser();
             List<TagModel> validTags = new List<TagModel>();
             ValidTagCacher cacher = new ValidTagCacher();
             Comparator comp = new Comparator();
@@ -102,12 +101,13 @@ namespace ChipTagValidatorUI
                     validTags = cacher.LoadCache();
                 }
 
-                if(validTags.Count == 0)
+                if (validTags.Count == 0)
                 {
                     throw new InvalidDataException("No valid tags available. Provide specification or data file");
                 }
 
-                if (chipDataDelimiterTextBox.Text.Length < 1) {
+                if (chipDataDelimiterTextBox.Text.Length < 1)
+                {
                     throw new InvalidDataException("Chip data delimiter must be provided, check your emboss specification");
                 }
 
@@ -115,11 +115,32 @@ namespace ChipTagValidatorUI
                 List<string> parsedCards = binParser.Parse(embossFileTextBox.Text);
                 ChipDataParser cp = new ChipDataParser(validTags);
                 List<List<TagModel>> tml = cp.ParseChipDataStrings(parsedCards);
-                List<TagModel> vpaTags = xmlParser.Parse(chipFormTextBox.Text);
+                IChipFormParserFactory chipParserFactory;
+                switch (brandComboBox.Text)
+                {
+                    case "Visa":
+                        chipParserFactory = new VisaChipParserFactory();
+                        break;
+                    case "Mastercard":
+                        chipParserFactory = new McChipParserFactory();
+                        break;
+                    default:
+                        throw new InvalidDataException("Parser not available for selected card brand");
+                }
+                IChipFileParser chipFormParser;
+                switch (stripFileType(chipFormTextBox.Text)) {
+                    case "xml":
+                        chipFormParser =  chipParserFactory.CreateXmlParser(); 
+                        break;
+                    default: throw new InvalidDataException($"Parser not available for selected file type: {stripFileType(chipFormTextBox.Text)}");
+                }
+
+                List<TagModel> vpaTags = chipFormParser.Parse(chipFormTextBox.Text);
+
                 foreach (List<TagModel> list in tml)
                 {
                     CardModel card = new CardModel();
-                    comp.Compare(list, vpaTags, card);
+                    //       comp.Compare(list, vpaTags, card);
                     card.AllChipData = list;
                     card.PAN = list.FirstOrDefault(tag => tag.InternalTagName == "5A").Value;
                     cards.Add(card);
@@ -145,6 +166,14 @@ namespace ChipTagValidatorUI
             return fileNameFull.Substring(0, indexOfDot);
         }
 
+        private string stripFileType(string path)
+        {
+            int indexOfBackslash = path.LastIndexOf("\\");
+            string fileNameFull = path.Substring(indexOfBackslash);
+            int indexOfDot = fileNameFull.IndexOf(".");
+            return fileNameFull.Substring(indexOfDot + 1);
+        }
+
 
 
 
@@ -153,7 +182,7 @@ namespace ChipTagValidatorUI
             var log = new LoggerConfiguration()
                 .Enrich.WithCaller()
                 .MinimumLevel.ControlledBy(debugSwitch)
-                .WriteTo.RichTextBox(logTextBox, outputTemplate: "[{Timestamp:yyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}", theme: ThemePresets.Light,        messageBatchSize: 1,        messagePendingInterval: 1,        autoScroll: true,        maxLogLines: 10000, minimumLogEventLevel: Serilog.Events.LogEventLevel.Information)
+                .WriteTo.RichTextBox(logTextBox, outputTemplate: "[{Timestamp:yyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}", theme: ThemePresets.Light, messageBatchSize: 1, messagePendingInterval: 1, autoScroll: true, maxLogLines: 10000, minimumLogEventLevel: Serilog.Events.LogEventLevel.Information)
                 .WriteTo.File("log.txt", outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}]: {Message:lj}{NewLine}", flushToDiskInterval: TimeSpan.FromMilliseconds(1000))
                 .CreateLogger();
             Log.Logger = log;
@@ -162,10 +191,12 @@ namespace ChipTagValidatorUI
         private void debugLogCheckbox_CheckedChanged(object sender, EventArgs e)
         {
             debugSwitch.MinimumLevel = debugLogCheckbox.Checked ? Serilog.Events.LogEventLevel.Debug : Serilog.Events.LogEventLevel.Information;
-            if (debugLogCheckbox.Checked) {
+            if (debugLogCheckbox.Checked)
+            {
                 Log.Information("--- Debug log available in debug_log.txt file in the root directory of the application ---");
             }
 
         }
+
     }
 }

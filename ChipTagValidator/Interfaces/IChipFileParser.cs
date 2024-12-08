@@ -8,10 +8,10 @@ using System.Xml;
 
 namespace ChipTagValidator.Interfaces
 {
-    public abstract class AbstractChipFileParser<T>
+    public interface IChipFileParser
     {
-        protected abstract T LoadFile(string path);
-        public abstract List<TagModel> Parse(string filePath);
+        public T LoadFile<T>(string path);
+        public List<TagModel> Parse(string filePath);
 
     }
 }

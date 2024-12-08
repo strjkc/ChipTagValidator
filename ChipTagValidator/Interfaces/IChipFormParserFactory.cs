@@ -10,7 +10,7 @@ namespace ChipTagValidator.Interfaces
     public interface IChipFormParserFactory
     {
 
-        public XmlParser CreateXmlParser();
+        public IChipFileParser CreateXmlParser();
         /*
           future implementation
         

@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using ChipTagValidator.Models;
+using Serilog;
 
 namespace ChipTagValidator.Interfaces
 {
-    public abstract class XmlParser : AbstractChipFileParser<XmlDocument>
+    public abstract class XmlParser : IChipFileParser
     {
         //da li parsira vpa ili cpv
         //primi fajl nadje maticni xml tag, unutar njega
@@ -16,8 +17,9 @@ namespace ChipTagValidator.Interfaces
 
         protected string _rootTag;
 
-        protected override XmlDocument LoadFile(string path)
+        public T LoadFile<T>(string path)
         {
+
             XmlDocument xmlDoc = new XmlDocument();
             try
             {
@@ -26,9 +28,9 @@ namespace ChipTagValidator.Interfaces
             catch (Exception ex)
             {
 
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
-            return xmlDoc;
+            return (T)(object)xmlDoc;
         }
 
         protected XmlNodeList GetRootElements(XmlDocument doc)
@@ -40,7 +42,6 @@ namespace ChipTagValidator.Interfaces
 
 
         public abstract List<TagModel> Parse(string filePath);
-
 
     }
 }
