@@ -13,16 +13,29 @@ namespace ChipTagValidator
 {
     public class ReportPrinter : IReportPrinter
     {
-        private string _reportSufix = "_parsed.txt";
-        private const string _missmatchTagsTitle = "#### Missmatch in values: #####\n";
-        private const string _duplicateTagsTitle = "#### Duplicate Tags: ####\n";
-        private const string _missingTagsTitle = "#### Tags Missing From Chip Form: ####\n";
-        private string _reportLocation = ".\\Parsed";
-        private string lineEndCharacters = "";
+        private string _reportSufix;
+        private string _missmatchTagsTitle;
+        private string _duplicateTagsTitle;
+        private string _missingTagsTitle;
+        private string _reportLocation;
+        private string _lineEndCharacters;
+
+
+        public ReportPrinter() {
+            ReportPrinterConfig config = Configuration.Config.ConfigModel.ReportPrinterConfig;
+            _reportSufix = config.ReportSufix;
+            _missmatchTagsTitle = config.MissmatchTagsTitle;
+            _duplicateTagsTitle = config.DuplicateTagsTitle;
+            _missingTagsTitle = config.MissingTagsTitle;
+            _reportLocation = config.ReportLocation;
+            _lineEndCharacters = config.LineEndCharacters;
+        
+        }
+
 
         private void EndLine(StreamWriter writer)
         {
-            writer.WriteLine(lineEndCharacters);
+            writer.WriteLine(_lineEndCharacters);
         }
         private void LineWriter(StreamWriter writer, string tag, string length, string value)
         {

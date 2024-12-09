@@ -13,6 +13,7 @@ using DocumentFormat.OpenXml.Bibliography;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using Serilog.Core;
 using ChipTagValidator.Interfaces;
+using System.Text.Json;
 
 
 namespace ChipTagValidatorUI
@@ -86,6 +87,7 @@ namespace ChipTagValidatorUI
             IReportPrinter reportPrinter = new ReportPrinter();
             List<CardModel> cards = new List<CardModel>();
 
+            
             try
             {
                 Log.Information("Parse method running");
@@ -140,7 +142,7 @@ namespace ChipTagValidatorUI
                 foreach (List<TagModel> list in tml)
                 {
                     CardModel card = new CardModel();
-                    //       comp.Compare(list, vpaTags, card);
+                    comp.Compare(list, vpaTags, card);
                     card.AllChipData = list;
                     card.PAN = list.FirstOrDefault(tag => tag.InternalTagName == "5A").Value;
                     cards.Add(card);
@@ -177,6 +179,8 @@ namespace ChipTagValidatorUI
 
         private void formWindow_Load(object sender, EventArgs e)
         {
+            Configuration config = Configuration.Config;
+            config.LoadConfig("..\\config.json");
             var log = new LoggerConfiguration()
                 .Enrich.WithCaller()
                 .MinimumLevel.ControlledBy(debugSwitch)

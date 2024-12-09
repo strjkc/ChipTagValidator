@@ -9,10 +9,10 @@ namespace TagsParser.Classes
     public class ChipDataParser
     {
         //Constant lengths according to the specification num of bytes * 2
-        private  int lenOfMacIdData = 12 * 2;
-        private  int lenOfEndDelimiter = 5 * 2;
-        private  int lenOfChipHeader = 27 * 2;
-        List<TagModel> validTags;
+        private  int _lenOfMacIdData;
+        private  int _lenOfEndDelimiter;
+        private  int _lenOfChipHeader;
+        List<TagModel> _validTags;
         /*
         public ChipDataParser(int lenOfMacIdData, int lenOfEndDelimiter, int lenOfChipHeader) {
             _lenOfMacIdData = lenOfMacIdData;
@@ -22,7 +22,12 @@ namespace TagsParser.Classes
         */
         public ChipDataParser(List<TagModel> validTags)
         {
-            this.validTags = validTags;
+            ChipDataParserConfig_inBytes config = Configuration.Config.ConfigModel.ChipDataParserConfig_inBytes;
+            _validTags = validTags;
+            _lenOfMacIdData = config.LenOfMacIdData * 2;
+            _lenOfEndDelimiter = config.LenOfEndDelimiter * 2;
+            _lenOfChipHeader = config.LenOfChipHeader * 2;
+
         }
 
         public List<List<TagModel>> ParseChipDataStrings(List<string> chipDatastrings)
@@ -98,7 +103,7 @@ namespace TagsParser.Classes
 
         private TagModel IsTagValid(string tag)
         {
-            foreach (TagModel validTag in validTags)
+            foreach (TagModel validTag in _validTags)
             {
                 if (validTag.InternalTagName.Equals(tag))
                     return validTag;
@@ -109,9 +114,9 @@ namespace TagsParser.Classes
         public string RemoveHeader(string chipstring)
         {
             Log.Information("Removing header and trailer from the chip data block");
-            string removedHeader = chipstring.Substring(lenOfChipHeader);
-            Log.Debug($"Removed header form chip data string: {chipstring.Substring(0, lenOfChipHeader)}");
-            int lengthOfTrailer = lenOfMacIdData + lenOfEndDelimiter;
+            string removedHeader = chipstring.Substring(_lenOfChipHeader);
+            Log.Debug($"Removed header form chip data string: {chipstring.Substring(0, _lenOfChipHeader)}");
+            int lengthOfTrailer = _lenOfMacIdData + _lenOfEndDelimiter;
             int lengthWithoutTrailer = removedHeader.Length - lengthOfTrailer;
             Log.Debug($"Removed Trailer form chip data string: {removedHeader.Substring(removedHeader.Length - lengthOfTrailer)}");
             string chipDataString = removedHeader.Substring(0, lengthWithoutTrailer);

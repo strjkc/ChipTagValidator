@@ -12,10 +12,10 @@ namespace ChipTagValidator
 {
     public class MastercardXmlParser : XmlParser
     {
-        private const string rootTag = "WORKSHEET";
-        private const string tagDescription = "NAME";
-        private const string tagName = "TAG";
-        private const string tagValue = "VALUE";
+        private string _rootTag;
+        private string _tagDescription;
+        private string _tagName;
+        private string _tagValue;
 
         //typeNode - parent nodes that contain tag types - Contact or contactless
         //tagNode - nodes that contain tags
@@ -34,21 +34,30 @@ namespace ChipTagValidator
             <ELEM NAME="Application Primary Account Number" VALUE="" TAG="5A"/>
            </WORKSHEET>
          */
+
+        public MastercardXmlParser() {
+            MastercardXmlParserConfig config = Configuration.Config.ConfigModel.MastercardXmlParserConfig;
+            _rootTag = config.RootTag;
+            _tagDescription = config.TagDescription;
+            _tagName = config.TagName;
+            _tagValue = config.TagValue;
+
+        }
         public override List<TagModel> Parse(string filePath)
         {
             Log.Information($"Parsing file {filePath}");
             List<TagModel> result = new List<TagModel>();
             XmlDocument doc = LoadFile<XmlDocument>(filePath);
-            XmlNodeList rootNodes = doc.GetElementsByTagName(rootTag);
+            XmlNodeList rootNodes = doc.GetElementsByTagName(_rootTag);
             foreach (XmlNode typeNode in rootNodes) {
-                string type = typeNode.Attributes.GetNamedItem(tagDescription).InnerText;
+                string type = typeNode.Attributes.GetNamedItem(_tagDescription).InnerText;
                 foreach (XmlNode tagNode in typeNode.ChildNodes) {
-                    string tagName = tagNode.Attributes.GetNamedItem(MastercardXmlParser.tagName).InnerText;
+                    string tagName = tagNode.Attributes.GetNamedItem(_tagName).InnerText;
                     if (tagName != "")
                     {
                         TagBuilder tagBuilder = new TagBuilder();
                         tagBuilder.StandardTagname = tagName;
-                        tagBuilder.Value = tagNode.Attributes.GetNamedItem(tagValue).InnerText;
+                        tagBuilder.Value = tagNode.Attributes.GetNamedItem(_tagValue).InnerText;
                         tagBuilder.Length = (tagBuilder.Value.Length / 2).ToString("X2");
                         tagBuilder.IsCless = type.Contains("contactless");
                         Log.Debug($" TLV: ${tagBuilder.StandardTagname} {tagBuilder.Length} {tagBuilder.Value}, IsCless: {tagBuilder.IsCless}");

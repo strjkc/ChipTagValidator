@@ -32,11 +32,21 @@ namespace ChipTagValidator
          */
         //TODO extract constants to json config
 
-        private string _tagelement = "tag";
-        private string _lengthElement = "taglength";
-        private string _valueElement = "tagvalue";
-        private string _typeElement = "tagname";
-        private string _attribute = "category";
+        private string _tagelement;
+        private string _lengthElement;
+        private string _valueElement;
+        private string _typeElement;
+        private string _attribute;
+
+        public VisaXmlParser() { 
+            VisaXmlParserConfig config = Configuration.Config.ConfigModel.VisaXmlParserConfig;
+            _tagelement = config.Tagelement;
+            _lengthElement = config.LengthElement;
+            _valueElement = config.ValueElement;
+            _typeElement = config.TypeElement;
+            _attribute = config.Attribute;
+        
+        }
 
         public override List<TagModel> Parse(string filePath) {
             XmlDocument doc = LoadFile<XmlDocument>(filePath);

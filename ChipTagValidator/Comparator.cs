@@ -38,7 +38,7 @@ public class Comparator
              * tag name is used for the contact tag.
             */
             TagModel tagFound = formTag.IsCless
-                ? embossTags.FirstOrDefault(embossTag => formTag.StandardTagname == embossTag.StandardTagname)
+                ? embossTags.FirstOrDefault(embossTag => formTag.StandardTagname == embossTag.StandardTagname && embossTag.IsCless)
                 : embossTags.FirstOrDefault(embossTag => formTag.StandardTagname == embossTag.InternalTagName);
 
             if (tagFound != null)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ChipTagValidator;
 using ChipTagValidator.Interfaces;
 using Serilog;
 using Serilog.Core;
@@ -30,7 +31,8 @@ namespace TagsParser.Classes
                 BinaryReader streamReader = new BinaryReader(stream);
                 StringBuilder currentstring = new StringBuilder();
                 StringBuilder chipDataString = new StringBuilder();
-                string cardEnd = "#END#";
+                Configuration config = Configuration.Config;
+                string cardEnd = config.ConfigModel.BinaryParserConfig.CardEnd;
                 Boolean chipDataStart = false;
                 List<string> chipDatastrings = new List<string>();
                 //int currentCharacter = streamReader.Read();

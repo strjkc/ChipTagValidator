@@ -15,13 +15,26 @@ namespace ChipTagValidator
     public class WordSpecParser
     {
         //TODO: these should be extracted to parameter values
-        private const int expectedColumnCount = 4;
-        private const int startFromTable = 5;
-        private string[] invalidValues = { "n/a", "/", "", " "};
-        int columnForInternalTags = 0;
-        int columnForStandardTags = 2;
-        int columnForTemplateTags = 3;
-        int columnForMandatoryTags = 4;
+        WordSpecParserConfig config;
+        private int expectedColumnCount;
+        private int startFromTable;
+        private string[] invalidValues;
+        int columnForInternalTags;
+        int columnForStandardTags;
+        int columnForTemplateTags;
+        int columnForMandatoryTags;
+
+
+        public WordSpecParser() {
+            config = Configuration.Config.ConfigModel.WordSpecParserConfig;
+            expectedColumnCount = config.ExpectedColumnCount;
+            startFromTable = config.StartFromTable;
+            invalidValues = config.InvalidValues;
+            columnForInternalTags = config.ColumnForInternalTags;
+            columnForStandardTags = config.ColumnForStandardTags;
+            columnForTemplateTags = config.ColumnForTemplateTags;
+            columnForMandatoryTags = config.ColumnForMandatoryTags;
+        }
 
         public List<TagModel> Parse(string file) {
             Log.Information($"Parsing Emboss file specification: {file}");
@@ -64,8 +77,9 @@ namespace ChipTagValidator
                 Log.Debug($"internalTagText {internalTagText}, standardTagText {standardTagText}, templateTagText{templateTagText}");
                 
                 tagBuilder.InternalTagName = internalTagText;
-                tagBuilder.StandardTagname = ContainsInvalidValues(standardTagText) ? "" : standardTagText;
+                tagBuilder.StandardTagname = ContainsInvalidValues(standardTagText) ? internalTagText : standardTagText;
                 tagBuilder.TemplateTag = ContainsInvalidValues(templateTagText) ? "" : templateTagText;
+                tagBuilder.IsCless = ContainsInvalidValues(standardTagText) ? false : true;
                 Log.Debug($"tag built: internal tag name {tagBuilder.InternalTagName}, standard tag name {tagBuilder.StandardTagname}, template tag name {tagBuilder.TemplateTag}");
             }
             catch (Exception e) {
