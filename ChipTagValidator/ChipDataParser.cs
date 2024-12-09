@@ -9,11 +9,17 @@ namespace TagsParser.Classes
     public class ChipDataParser
     {
         //Constant lengths according to the specification num of bytes * 2
-        private const int lenOfMacIdData = 12 * 2;
-        private const int lenOfEndDelimiter = 5 * 2;
-        private const int lenOfChipHeader = 27 * 2;
+        private  int lenOfMacIdData = 12 * 2;
+        private  int lenOfEndDelimiter = 5 * 2;
+        private  int lenOfChipHeader = 27 * 2;
         List<TagModel> validTags;
-
+        /*
+        public ChipDataParser(int lenOfMacIdData, int lenOfEndDelimiter, int lenOfChipHeader) {
+            _lenOfMacIdData = lenOfMacIdData;
+            _lenOfEndDelimiter = lenOfEndDelimiter;
+            _lenOfChipHeader = lenOfChipHeader;
+        }
+        */
         public ChipDataParser(List<TagModel> validTags)
         {
             this.validTags = validTags;

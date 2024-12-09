@@ -49,6 +49,7 @@
             contextMenuStrip1 = new ContextMenuStrip(components);
             debugLogCheckbox = new CheckBox();
             brandComboBox = new ComboBox();
+            cardBrandLabel = new Label();
             SuspendLayout();
             // 
             // openFileDialog1
@@ -118,7 +119,7 @@
             // 
             // chipDataDelimiterTextBox
             // 
-            chipDataDelimiterTextBox.Location = new Point(454, 107);
+            chipDataDelimiterTextBox.Location = new Point(454, 108);
             chipDataDelimiterTextBox.Name = "chipDataDelimiterTextBox";
             chipDataDelimiterTextBox.Size = new Size(100, 23);
             chipDataDelimiterTextBox.TabIndex = 9;
@@ -197,17 +198,27 @@
             // 
             brandComboBox.FormattingEnabled = true;
             brandComboBox.Items.AddRange(new object[] { "Visa", "Mastercard" });
-            brandComboBox.Location = new Point(621, 105);
+            brandComboBox.Location = new Point(599, 108);
             brandComboBox.Name = "brandComboBox";
             brandComboBox.Size = new Size(121, 23);
             brandComboBox.TabIndex = 18;
-            brandComboBox.SelectedText = "Visa";
+            brandComboBox.Text = "Visa";
+            // 
+            // cardBrandLabel
+            // 
+            cardBrandLabel.AutoSize = true;
+            cardBrandLabel.Location = new Point(599, 89);
+            cardBrandLabel.Name = "cardBrandLabel";
+            cardBrandLabel.Size = new Size(66, 15);
+            cardBrandLabel.TabIndex = 19;
+            cardBrandLabel.Text = "Card Brand";
             // 
             // formWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(834, 568);
+            Controls.Add(cardBrandLabel);
             Controls.Add(brandComboBox);
             Controls.Add(debugLogCheckbox);
             Controls.Add(logTextBox);
@@ -256,5 +267,6 @@
         private ContextMenuStrip contextMenuStrip1;
         private CheckBox debugLogCheckbox;
         private ComboBox brandComboBox;
+        private Label cardBrandLabel;
     }
 }

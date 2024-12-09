@@ -30,6 +30,7 @@ namespace ChipTagValidator
                 <tagvalue>40700D00</tagvalue>
             </tagelement>
          */
+        //TODO extract constants to json config
 
         private string _tagelement = "tag";
         private string _lengthElement = "taglength";

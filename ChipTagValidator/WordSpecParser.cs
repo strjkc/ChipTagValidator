@@ -15,13 +15,13 @@ namespace ChipTagValidator
     public class WordSpecParser
     {
         //TODO: these should be extracted to parameter values
-        private const int expectedColumnCount = 6;
+        private const int expectedColumnCount = 4;
         private const int startFromTable = 5;
         private string[] invalidValues = { "n/a", "/", "", " "};
-        int columnForInternalTags = 1;
-        int columnForStandardTags = 3;
-        int columnForTemplateTags = 4;
-        int columnForMandatoryTags = 5;
+        int columnForInternalTags = 0;
+        int columnForStandardTags = 2;
+        int columnForTemplateTags = 3;
+        int columnForMandatoryTags = 4;
 
         public List<TagModel> Parse(string file) {
             Log.Information($"Parsing Emboss file specification: {file}");

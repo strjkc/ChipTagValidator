@@ -8,6 +8,7 @@ namespace ChipTagValidator.Models
 {
     public class TagModel
     {
+        
         public string StandardTagname { get; private set; }
         public string InternalTagName { get; private set; }
         public string Length { get; private set; }

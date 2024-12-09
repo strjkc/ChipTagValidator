@@ -21,7 +21,6 @@ namespace ChipTagValidatorUI
     {
         LoggingLevelSwitch debugSwitch = new LoggingLevelSwitch { MinimumLevel = Serilog.Events.LogEventLevel.Information };
         //TODO refactor logging to methods
-        //TODO abstract factory for xml parser
         public formWindow()
         {
             InitializeComponent();
@@ -82,9 +81,9 @@ namespace ChipTagValidatorUI
         {
             WordSpecParser sp = new WordSpecParser();
             List<TagModel> validTags = new List<TagModel>();
-            ValidTagCacher cacher = new ValidTagCacher();
+            ICacher cacher = new ValidTagCacher();
             Comparator comp = new Comparator();
-            ReportPrinter reportPrinter = new ReportPrinter();
+            IReportPrinter reportPrinter = new ReportPrinter();
             List<CardModel> cards = new List<CardModel>();
 
             try
@@ -111,7 +110,7 @@ namespace ChipTagValidatorUI
                     throw new InvalidDataException("Chip data delimiter must be provided, check your emboss specification");
                 }
 
-                BinaryParser binParser = new BinaryParser(chipDataDelimiterTextBox.Text);
+                IBinaryParser binParser = new BinaryParser(chipDataDelimiterTextBox.Text);
                 List<string> parsedCards = binParser.Parse(embossFileTextBox.Text);
                 ChipDataParser cp = new ChipDataParser(validTags);
                 List<List<TagModel>> tml = cp.ParseChipDataStrings(parsedCards);
@@ -128,6 +127,7 @@ namespace ChipTagValidatorUI
                         throw new InvalidDataException("Parser not available for selected card brand");
                 }
                 IChipFileParser chipFormParser;
+                string x = stripFileType(chipFormTextBox.Text);
                 switch (stripFileType(chipFormTextBox.Text)) {
                     case "xml":
                         chipFormParser =  chipParserFactory.CreateXmlParser(); 
@@ -168,10 +168,8 @@ namespace ChipTagValidatorUI
 
         private string stripFileType(string path)
         {
-            int indexOfBackslash = path.LastIndexOf("\\");
-            string fileNameFull = path.Substring(indexOfBackslash);
-            int indexOfDot = fileNameFull.IndexOf(".");
-            return fileNameFull.Substring(indexOfDot + 1);
+            int indexOfDot = path.LastIndexOf(".");
+            return path.Substring(indexOfDot + 1);
         }
 
 
