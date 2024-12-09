@@ -1,0 +1,41 @@
+   {
+    "wordSpecParserConfig" : {
+            "expectedColumnCount": 5,
+            "startFromTable": 5,
+            "invalidValues" : [ "n/a", "/", "", " "],
+            "columnForInternalTags": 0,
+            "columnForStandardTags": 2,
+            "columnForTemplateTags": 3,
+            "columnForMandatoryTags": 4
+    },
+    "visaXmlParserConfig": {
+            "tagelement": "tag",
+            "lengthElement": "taglength",
+            "valueElement": "tagvalue",
+            "typeElement": "tagname",
+            "attribute": "category"
+    },
+    "mastercardXmlParserConfig": {
+            "rootTag": "WORKSHEET",
+            "tagDescription": "NAME",
+            "tagName": "TAG",
+            "tagValue": "VALUE"
+    },
+    "reportPrinterConfig":{
+            "reportSufix": "_parsed.txt",
+            "missmatchTagsTitle": "#### Missmatch in values: #####\n",
+            "duplicateTagsTitle": "#### Duplicate Tags: ####\n",
+            "missingTagsTitle": "#### Tags Missing From Chip Form: ####\n",
+            "reportLocation": ".\\Parsed",
+            "lineEndCharacters": ""
+    },
+    "chipDataParserConfig_inBytes": {
+            "lenOfMacIdData" : 12,
+            "lenOfEndDelimiter" : 5,
+            "lenOfChipHeader" : 27
+    },
+    "binaryParserConfig":{
+            "cardEnd": "#END#"
+    }
+
+}
